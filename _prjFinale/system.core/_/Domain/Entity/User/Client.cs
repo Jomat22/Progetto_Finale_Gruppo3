@@ -1,0 +1,18 @@
+class Client : BaseEntity
+{
+    public int PersonId { get; set; }
+    public string CodiceCliente { get; set; }
+    public bool IsFidelizzato { get; set; }
+    public bool IsIscrittoNewsletter { get; set; }
+
+    // Proprietà navigazione
+    public Person? person { get; set; }
+
+    public Client(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, 
+        int personId, string codiceCliente, bool isFidelizzato) : base(id, isDeleted, createdAt, modifiedAt) 
+    { 
+        PersonId = personId;
+        CodiceCliente = codiceCliente;
+        IsFidelizzato = isFidelizzato; 
+    }
+}
