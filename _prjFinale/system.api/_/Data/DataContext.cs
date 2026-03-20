@@ -1,9 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using system.core._.Domain.Entity.User;
-
 namespace system.api._.Data;
 
-class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
+public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
 {
     DbSet<Person> People => Set<Person>();
     DbSet<Client> Clients => Set<Client>();
@@ -15,7 +14,9 @@ class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
         {
             entity.ToTable("persone");
             entity.HasKey(pk => pk.Id);
-          
+            entity.HasIndex(e => e.CodiceFiscale).IsUnique();
+            entity.HasIndex(e => e.Email).IsUnique();
+
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.CodiceFiscale).HasColumnOrder(2).HasColumnName("codice_fiscale").HasColumnType("varchar(16)");
             entity.Property(e => e.Nome).HasColumnOrder(3).HasColumnName("nome").HasColumnType("varchar(100)");
@@ -38,9 +39,10 @@ class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
             entity.ToTable("clienti");
             entity.HasKey(pk => pk.Id);
             entity.HasOne(np => np.Person).WithOne().HasForeignKey<Client>(fk => fk.PersonId);
+            entity.HasIndex(e => e.CodiceCliente).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int");
+            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
             entity.Property(e => e.CodiceCliente).HasColumnOrder(3).HasColumnName("codice_cliente").HasColumnType("varchar(20)");
             entity.Property(e => e.IsFidelizzato).HasColumnOrder(4).HasColumnName("is_fidelizzato").HasColumnType("tinyint(1)");
             entity.Property(e => e.IsIscrittoNewsletter).HasColumnOrder(5).HasColumnName("is_iscritto_newsletter").HasColumnType("tinyint(1)");
@@ -54,9 +56,10 @@ class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
             entity.ToTable("dipendenti");
             entity.HasKey(pk => pk.Id);
             entity.HasOne(np => np.Person).WithOne().HasForeignKey<Employee>(fk => fk.PersonId);
+            entity.HasIndex(e => e.CodiceMeccanografico).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int");
+            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
             entity.Property(e => e.CodiceMeccanografico).HasColumnOrder(3).HasColumnName("codice_meccanografico").HasColumnType("varchar(10)");
             entity.Property(e => e.Password).HasColumnOrder(4).HasColumnName("password").HasColumnType("varchar(24)");
             entity.Property(e => e.Ruolo).HasColumnOrder(5).HasColumnName("ruolo").HasColumnType("varchar(50)");
