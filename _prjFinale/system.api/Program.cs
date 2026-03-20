@@ -1,14 +1,57 @@
+using Microsoft.EntityFrameworkCore;
+using system.api._.Data;
+using AutoMapper;
+using system.core._.Interface;
+using system.core._.Strategy.Payment;
+
 namespace system.api;
 
 public class Program {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddOpenApi();
+        
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionString");
+        builder.Services.AddDbContext<DataContext>(options =>
+            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+        );
 
+        builder.Services.AddControllers()
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
+         builder.Services.AddControllers()
+        .AddJsonOptions(options =>
+        {
+            /* 
+            * Previene l'errore "A possible object cycle was detected" (JsonException).
+            * Questo accade quando le entità si riferiscono l'una all'altra (es. Persona -> Dipendente -> Persona).
+            * Con 'IgnoreCycles', il serializzatore smette di seguire le proprietà di navigazione se incontra un ciclo,
+            * evitando loop infiniti e il crash del sistema durante la generazione del JSON.
+            */
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+
+
+            // Settando a 'null', il serializzatore di non applicherà alcuna trasformazione ai nomi delle proprietà durante la conversione in JSON.
+            // Il JSON manterrà esattamente la stessa formattazione usata nelle classi C# (PascalCase).
+            options.JsonSerializerOptions.PropertyNamingPolicy = null;
+
+            // Rendo il JSON prodotto più leggibile per il debugging su Scalar/Postman
+            options.JsonSerializerOptions.WriteIndented = true;
+        });
+
+        builder.Services.AddOpenApi();
+        builder.Services.AddAutoMapper(typeof(Program).Assembly);
+        builder.Services.AddScoped<IPaymentContext, PaymentContext>();
+        builder.Services.AddScoped<IPaymentStrategy, BitcoinPaymentStrategy>();
+        builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();
+        builder.Services.AddScoped<IPaymentStrategy, LiquidPaymentStrategy>();
+        builder.Services.AddScoped<IPaymentStrategy, PaypalPaymentStrategy>();
+        
         var app = builder.Build();
 
-        // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.MapOpenApi();
