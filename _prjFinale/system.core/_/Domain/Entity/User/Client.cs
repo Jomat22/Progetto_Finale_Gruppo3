@@ -1,4 +1,6 @@
-class Client : BaseEntity
+namespace system.core._.Domain.Entity.User;
+
+public class Client : BaseEntity
 {
     public int PersonId { get; set; }
     public string CodiceCliente { get; set; }
@@ -6,7 +8,7 @@ class Client : BaseEntity
     public bool IsIscrittoNewsletter { get; set; }
 
     // Proprietà navigazione
-    public Person? person { get; set; }
+    public Person? Person { get; set; }
 
     public Client(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, 
         int personId, string codiceCliente, bool isFidelizzato) : base(id, isDeleted, createdAt, modifiedAt) 

@@ -1,4 +1,6 @@
-class Employee : BaseEntity
+namespace system.core._.Domain.Entity.User;
+
+public class Employee : BaseEntity
 {
     public int PersonId { get; set; }
     public string CodiceMeccanografico { get; set; } = default!;
@@ -6,7 +8,7 @@ class Employee : BaseEntity
     public decimal Salario { get; set; }
 
     // Proprietà navigazione
-    public Person? person { get; set; }
+    public Person? Person { get; set; }
 
     public Employee(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, int personId, 
         string codiceMeccanografico, string ruolo, decimal salario) : base(id, isDeleted, createdAt, modifiedAt) 

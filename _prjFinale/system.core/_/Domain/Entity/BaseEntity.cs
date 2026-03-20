@@ -1,4 +1,6 @@
-abstract class BaseEntity
+namespace system.core._.Domain.Entity;
+
+public abstract class BaseEntity
 {
     public int Id { get; set; }
     public bool IsDeleted { get; set; }

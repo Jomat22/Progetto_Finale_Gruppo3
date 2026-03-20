@@ -1,4 +1,6 @@
-class Person : BaseEntity
+namespace system.core._.Domain.Entity.User;
+
+public class Person : BaseEntity
 {
     public string CodiceFiscale { get; set; } = default!; 
     public string Nome { get; set; } = default!; 

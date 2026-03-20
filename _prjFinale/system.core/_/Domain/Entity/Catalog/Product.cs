@@ -1,7 +1,7 @@
+using system.core._.Interface;
 namespace system.core._.Domain.Entity.Catalog;
-using system.core._.Interface.Payment;
 
-class Product : BaseEntity, IProduct
+public class Product : BaseEntity, IProduct
 {
     // Stock Keeping Unit (scelto perché standard universali per magazzini/e-commerce)
     public string Sku { get; set; }
