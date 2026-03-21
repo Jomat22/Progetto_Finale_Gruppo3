@@ -5,9 +5,9 @@ namespace store.api._.Data;
 
 public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
 {
-    DbSet<Person> People => Set<Person>();
-    DbSet<Client> Clients => Set<Client>();
-    DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<Person> People => Set<Person>();
+    public DbSet<Client> Clients => Set<Client>();
+    public DbSet<Employee> Employees => Set<Employee>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
