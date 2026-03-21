@@ -1,0 +1,16 @@
+@baseUrl = http://localhost:5102/api/Payment
+
+### Test Pagamento Bitcoin
+POST {{baseUrl}}/pay?provider=Bitcoin&amount=100
+
+### Test Pagamento Carta di Credito
+POST {{baseUrl}}/pay?provider=CreditCard&amount=100
+
+### Test Pagamento Contanti (Liquid)
+POST {{baseUrl}}/pay?provider=Liquid&amount=100
+
+### Test Pagamento PayPal
+POST {{baseUrl}}/pay?provider=Paypal&amount=100
+
+### Test Errore (Provider inesistente)
+POST {{baseUrl}}/pay?provider=PostePay&amount=100
