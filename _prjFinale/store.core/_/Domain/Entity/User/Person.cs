@@ -14,8 +14,9 @@ public class Person : BaseEntity
     public string NumeroContatto { get; set; } = default!;
     public string Email { get; set; } = default!;
 
-    public Person(int id, bool isActive, DateTime createdAt, DateTime modifiedAt, string codiceFiscale, string nome, 
-        string cognome, string sesso, DateOnly dataNascita, string citta, string provincia, string codicePostale, string indirizzo) : base(id, isActive, createdAt, modifiedAt)
+    protected Person() : base() { }
+    public Person(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, string codiceFiscale, string nome, 
+        string cognome, string sesso, DateOnly dataNascita, string citta, string provincia, string codicePostale, string indirizzo) : base(id, isDeleted, createdAt, modifiedAt)
     {
         CodiceFiscale = codiceFiscale; Nome = nome; Cognome = cognome; Sesso = sesso; DataNascita = dataNascita;
         Citta = citta; Provincia = provincia; CodicePostale = codicePostale; Indirizzo = indirizzo;

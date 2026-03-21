@@ -7,6 +7,7 @@ public abstract class BaseEntity
     public DateTime CreatedAt { get; set; }
     public DateTime ModifiedAt { get; set; }
 
+    protected BaseEntity() { }
     public BaseEntity(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt) { 
         Id = id; IsDeleted = isDeleted; CreatedAt = createdAt; ModifiedAt = modifiedAt;
     }
