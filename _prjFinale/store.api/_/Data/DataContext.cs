@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using store.core._.Domain.Entity.Catalog;
 using store.core._.Domain.Entity.User;
 namespace store.api._.Data;
 
@@ -67,6 +68,21 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.IsDeleted).HasColumnOrder(7).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
             entity.Property(e => e.CreatedAt).HasColumnOrder(8).HasColumnName("created_at").HasColumnType("datetime(6)");
             entity.Property(e => e.ModifiedAt).HasColumnOrder(9).HasColumnName("modified_at").HasColumnType("datetime(6)");
+        });
+        
+        modelBuilder.Entity<Product>(entity =>
+        {
+            entity.ToTable("prodotti");
+            entity.HasKey(pk => pk.Id);
+            entity.HasIndex(e => e.Sku).IsUnique();
+
+            entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
+            entity.Property(e => e.Sku).HasColumnOrder(2).HasColumnName("sku").HasColumnType("varchar(30").IsRequired();;
+            entity.Property(e => e.Nome).HasColumnOrder(3).HasColumnName("nome").HasColumnType("varchar(100)");
+            entity.Property(e => e.Qnt).HasColumnOrder(4).HasColumnName("qnt").HasColumnType("int");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(5).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(6).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(7).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
     }
 }

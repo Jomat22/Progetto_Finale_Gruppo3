@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using store.core._.Interface;
+namespace store.api._.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/[controller]")]

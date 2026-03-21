@@ -53,6 +53,27 @@ namespace store.api.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "prodotti",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    sku = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    nome = table.Column<string>(type: "varchar(100)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    qnt = table.Column<int>(type: "int", nullable: false),
+                    is_deleted = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    modified_at = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_prodotti", x => x.id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "clienti",
                 columns: table => new
                 {
@@ -144,6 +165,12 @@ namespace store.api.Migrations
                 table: "persone",
                 column: "email",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_prodotti_sku",
+                table: "prodotti",
+                column: "sku",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -154,6 +181,9 @@ namespace store.api.Migrations
 
             migrationBuilder.DropTable(
                 name: "dipendenti");
+
+            migrationBuilder.DropTable(
+                name: "prodotti");
 
             migrationBuilder.DropTable(
                 name: "persone");

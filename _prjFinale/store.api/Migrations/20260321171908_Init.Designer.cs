@@ -12,7 +12,7 @@ using store.api._.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260321170248_Init")]
+    [Migration("20260321171908_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -24,6 +24,56 @@ namespace store.api.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
+
+            modelBuilder.Entity("store.core._.Domain.Entity.Catalog.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasColumnOrder(1);
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at")
+                        .HasColumnOrder(6);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_deleted")
+                        .HasColumnOrder(5);
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at")
+                        .HasColumnOrder(7);
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("varchar(100)")
+                        .HasColumnName("nome")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Qnt")
+                        .HasColumnType("int")
+                        .HasColumnName("qnt")
+                        .HasColumnOrder(4);
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasColumnType("varchar(30")
+                        .HasColumnName("sku")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Sku")
+                        .IsUnique();
+
+                    b.ToTable("prodotti", (string)null);
+                });
 
             modelBuilder.Entity("store.core._.Domain.Entity.User.Client", b =>
                 {
