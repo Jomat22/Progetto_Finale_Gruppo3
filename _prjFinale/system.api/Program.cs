@@ -43,7 +43,11 @@ public class Program {
         });
 
         builder.Services.AddOpenApi();
-        builder.Services.AddAutoMapper(typeof(Program).Assembly);
+        // Invece di passargli l'assembly direttamente, gli diciamo di scansionare 
+        // tutti i profili di mappatura presenti nel progetto.
+        builder.Services.AddAutoMapper(cfg => {
+            cfg.AddMaps(typeof(Program).Assembly);
+        });
         builder.Services.AddScoped<IPaymentContext, PaymentContext>();
         builder.Services.AddScoped<IPaymentStrategy, BitcoinPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();

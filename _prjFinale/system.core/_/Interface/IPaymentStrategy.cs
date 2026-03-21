@@ -2,5 +2,6 @@ namespace system.core._.Interface;
 
 public interface IPaymentStrategy
 {
-    public string ExecutePayment(decimal amount);
+    string Provider { get; }
+    string ExecutePayment(decimal amount);
 }

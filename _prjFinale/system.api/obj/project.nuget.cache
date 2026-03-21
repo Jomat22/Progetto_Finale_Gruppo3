@@ -1,11 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "FqpyqDbI26Q=",
+  "dgSpecHash": "GEuwxkjnF3g=",
   "success": true,
   "projectFilePath": "C:\\Users\\User\\Documents\\GitHub\\Progetto_Finale_Gruppo3\\_prjFinale\\system.api\\system.api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\User\\.nuget\\packages\\automapper\\16.1.1\\automapper.16.1.1.nupkg.sha512",
-    "C:\\Users\\User\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.aspnetcore.openapi\\10.0.5\\microsoft.aspnetcore.openapi.10.0.5.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\7.0.0\\microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
@@ -39,18 +38,5 @@
     "C:\\Users\\User\\.nuget\\packages\\system.composition.runtime\\7.0.0\\system.composition.runtime.7.0.0.nupkg.sha512",
     "C:\\Users\\User\\.nuget\\packages\\system.composition.typedparts\\7.0.0\\system.composition.typedparts.7.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 16.1.1 was resolved.",
-      "projectPath": "C:\\Users\\User\\Documents\\GitHub\\Progetto_Finale_Gruppo3\\_prjFinale\\system.api\\system.api.csproj",
-      "warningLevel": 1,
-      "filePath": "C:\\Users\\User\\Documents\\GitHub\\Progetto_Finale_Gruppo3\\_prjFinale\\system.api\\system.api.csproj",
-      "libraryId": "AutoMapper",
-      "targetGraphs": [
-        "net10.0"
-      ]
-    }
-  ]
+  "logs": []
 }

@@ -3,7 +3,7 @@ namespace system.core._.Domain.Entity.Catalog;
 
 public class Product : BaseEntity, IProduct
 {
-    // Stock Keeping Unit (scelto perché standard universali per magazzini/e-commerce)
+    // Stock Keeping Unit (scelto perché standard universale per magazzini/e-commerce)
     public string Sku { get; set; }
     public string Name { get; set; }
     public int Qnt { get; set; }
