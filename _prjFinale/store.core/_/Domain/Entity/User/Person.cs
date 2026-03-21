@@ -14,11 +14,24 @@ public class Person : BaseEntity
     public string NumeroContatto { get; set; } = default!;
     public string Email { get; set; } = default!;
 
-    protected Person() : base() { }
+    // Da 'private' a 'protected' per permettere al 'DbContext' di funzionare correttamente, adesso su 'public' per il seeding (.HasData)
+    // N.B.: Si poteva usare il costruttore parametrizzato per passare direttamente gli argomenti, ho preferito invece
+    // usare il primo per specificare manualmente Proprietà e valore da asseganre nel 'DbContext'.
+    public Person() : base() { }
     public Person(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, string codiceFiscale, string nome, 
-        string cognome, string sesso, DateOnly dataNascita, string citta, string provincia, string codicePostale, string indirizzo) : base(id, isDeleted, createdAt, modifiedAt)
+        string cognome, string sesso, DateOnly dataNascita, string citta, string provincia, string codicePostale, 
+        string indirizzo, string numeroContatto, string email) : base(id, isDeleted, createdAt, modifiedAt)
     {
-        CodiceFiscale = codiceFiscale; Nome = nome; Cognome = cognome; Sesso = sesso; DataNascita = dataNascita;
-        Citta = citta; Provincia = provincia; CodicePostale = codicePostale; Indirizzo = indirizzo;
+        CodiceFiscale = codiceFiscale; 
+        Nome = nome; 
+        Cognome = cognome; 
+        Sesso = sesso; 
+        DataNascita = dataNascita; 
+        Citta = citta; 
+        Provincia = provincia; 
+        CodicePostale = codicePostale; 
+        Indirizzo = indirizzo; 
+        NumeroContatto = numeroContatto; 
+        Email = email;
     }
 }

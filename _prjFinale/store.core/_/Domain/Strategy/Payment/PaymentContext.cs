@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
-using store.core._.Interface;
+using store.core._.Domain.Interface;
 
-namespace store.core._.Strategy.Payment;
+namespace store.core._.Domain.Strategy.Payment;
 
 public class PaymentContext : IPaymentContext
 {

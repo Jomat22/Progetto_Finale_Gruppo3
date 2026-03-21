@@ -1,6 +1,7 @@
 using store.api._.Common;
 using store.api._.Factory;
 using store.api._.Infrastructure.Repo;
+using store.core._.Application.Dto.Person;
 using store.core._.Domain.Entity.User;
 namespace store.api._.Infrastructure.Service;
 
@@ -11,7 +12,10 @@ public class PersonService(PersonRepository repo)
     public async Task<ApiResponseBase> GetPerson_serv(string codiceFiscale) {
         try
         {
-            return ApiResponseFactory.SuccessNoChanges(string.Empty);
+            Person? person = await _repo.GetPerson_repo(codiceFiscale);
+            if (person is null) return ApiResponseFactory.NotFound();
+
+            return ApiResponseFactory.Success(person);
         } catch (Exception) { throw; }
     }
     
@@ -21,9 +25,14 @@ public class PersonService(PersonRepository repo)
         return ApiResponseFactory.Success(people); 
     }
     
-    public async Task<ApiResponseBase> PostPerson_serv() {
+    public async Task<ApiResponseBase> PostPerson_serv(PersonCreateRequest request) {
         try
         {
+            Person? existingPerson = await _repo.GetPerson_repo(request.Email);
+            if (existingPerson is not null) return ApiResponseFactory.Conflict();
+
+            
+
             return ApiResponseFactory.SuccessNoChanges(string.Empty);
         } catch (Exception) { throw; }
     }

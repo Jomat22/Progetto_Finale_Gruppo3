@@ -1,6 +1,6 @@
 using store.core._.Domain.Const;
-using store.core._.Interface;
-namespace store.core._.Strategy.Payment;
+using store.core._.Domain.Interface;
+namespace store.core._.Domain.Strategy.Payment;
 
 public class LiquidPaymentStrategy : IPaymentStrategy
 {

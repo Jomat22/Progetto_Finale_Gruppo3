@@ -11,7 +11,7 @@ public class Employee : BaseEntity
     // Proprietà navigazione
     public Person? Person { get; set; }
 
-    protected Employee() : base() { }
+    public Employee() : base() { }
     public Employee(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, int personId, 
         string codiceMeccanografico, string password, string ruolo, decimal salario) : base(id, isDeleted, createdAt, modifiedAt) 
     { 

@@ -1,16 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 using store.api._.Common;
-using store.api._.Dto.Person;
 using store.api._.Factory;
 using store.api._.Infrastructure.Service;
+using store.core._.Application.Dto.Person;
 using store.core._.Domain.Entity.User;
 namespace store.api._.Infrastructure.Controller;
 
 [ApiController]
 [Route("api/[Controller]")]
-public class PersonController(PersonService personService) : ControllerBase
+public class PersonController(PersonService serv) : ControllerBase
 {
-    private readonly PersonService _personService = personService;
+    private readonly PersonService _serv = serv;
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -26,7 +26,7 @@ public class PersonController(PersonService personService) : ControllerBase
             PersonGetByRequest request = new() { CodiceFiscale = codiceFiscale };
             if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
 
-            ApiResponseBase response = await _personService.GetPerson_serv(request.CodiceFiscale);
+            ApiResponseBase response = await _serv.GetPerson_serv(request.CodiceFiscale);
 
             return response switch
             {
@@ -42,7 +42,7 @@ public class PersonController(PersonService personService) : ControllerBase
     {
         try 
         {
-            ApiResponseBase response = await _personService.GetAllPerson_serv();
+            ApiResponseBase response = await _serv.GetAllPerson_serv();
 
             return response switch
             {
@@ -54,29 +54,47 @@ public class PersonController(PersonService personService) : ControllerBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> PostPerson_cont()
+    public async Task<IActionResult> PostPerson_cont([FromBody] PersonCreateRequest request)
     {
         try 
         {
-            return Ok();
+            if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
+            ApiResponseBase response = await _serv.PostPerson_serv(request);
+            
+            return response switch
+            {
+                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
+                _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
+            };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
     }
     
-    [HttpPut]
+    /* [HttpPut]
     public async Task<IActionResult> PutPerson_cont()
     {
         try 
         {
-            return Ok();
+            return response switch
+            {
+                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
+                _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
+            };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
-    }
+    } */
     
-    [HttpDelete]
+    /* [HttpDelete]
     public async Task<IActionResult> DeletePerson_cont()
     {
         try 
         {
-            return Ok();
+            return response switch
+            {
+                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
+                _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
+            };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
-    }
+    } */
 }

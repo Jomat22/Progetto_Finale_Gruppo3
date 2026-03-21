@@ -10,7 +10,7 @@ public class Client : BaseEntity
     // Proprietà navigazione
     public Person? Person { get; set; }
 
-    protected Client() : base() { }
+    public Client() : base() { }
     public Client(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, 
         int personId, string codiceCliente, bool isFidelizzato) : base(id, isDeleted, createdAt, modifiedAt) 
     { 

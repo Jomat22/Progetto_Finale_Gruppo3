@@ -1,4 +1,4 @@
-using store.core._.Interface;
+using store.core._.Domain.Interface;
 namespace store.core._.Domain.Entity.Catalog;
 
 public class Product : BaseEntity, IProduct
@@ -8,7 +8,7 @@ public class Product : BaseEntity, IProduct
     public string Nome { get; set; } = default!;
     public int Qnt { get; set; }
     
-    protected Product() : base() {}
+    public Product() : base() {}
     public Product(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, 
         string sku, string nome, int qnt) : base(id, isDeleted, createdAt, modifiedAt)
     {

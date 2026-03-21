@@ -1,4 +1,4 @@
-namespace store.core._.Interface;
+namespace store.core._.Domain.Interface;
 
 public interface IPaymentStrategy
 {

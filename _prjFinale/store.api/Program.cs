@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using store.api._.Data;
 using AutoMapper;
-using store.core._.Interface;
-using store.core._.Strategy.Payment;
+using store.core._.Domain.Interface;
+using store.core._.Domain.Strategy.Payment;
+using store.api._.Infrastructure.Service;
+using store.api._.Infrastructure.Repo;
 
 namespace store.api;
 
@@ -16,14 +18,10 @@ public class Program {
             options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         );
 
-        builder.Services.AddControllers()
-            .ConfigureApiBehaviorOptions(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-
-         builder.Services.AddControllers()
-        .AddJsonOptions(options =>
+        builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        }).AddJsonOptions(options =>
         {
             /* 
             * Previene l'errore "A possible object cycle was detected" (JsonException).
@@ -48,6 +46,9 @@ public class Program {
         builder.Services.AddAutoMapper(cfg => {
             cfg.AddMaps(typeof(Program).Assembly);
         });
+
+        builder.Services.AddScoped<PersonService>();
+        builder.Services.AddScoped<PersonRepository>();
         builder.Services.AddScoped<IPaymentContext, PaymentContext>();
         builder.Services.AddScoped<IPaymentStrategy, BitcoinPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();

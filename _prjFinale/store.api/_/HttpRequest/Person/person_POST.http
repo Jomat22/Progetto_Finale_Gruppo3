@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:5102/api/Person
+
+### Test (Esistente) => POST
+POST {{baseUrl}}/0000000000000001
+
+### Test (Inesistente) => POST
+POST {{baseUrl}}/ABCDEFGHIJKLMNOP
+
+### Test (Errato) => POST
+POST {{baseUrl}}/ERRORE

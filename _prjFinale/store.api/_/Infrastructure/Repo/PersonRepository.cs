@@ -7,10 +7,10 @@ public class PersonRepository(DataContext context)
 {
     private readonly DataContext _context = context;
 
-    public async Task<int> GetPerson_repo() {
+    public async Task<Person?> GetPerson_repo(string codiceFiscale) {
         try
         {
-            return -1;
+            return await _context.People.FirstOrDefaultAsync(e => e.CodiceFiscale.Equals(codiceFiscale, StringComparison.CurrentCultureIgnoreCase));
         } catch (Exception) { throw; }
     }
     
