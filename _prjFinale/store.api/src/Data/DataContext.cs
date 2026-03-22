@@ -129,7 +129,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 Id = i,
                 PersonId = i, // FK verso Person 1-10
                 CodiceMeccanografico = $"{i:D10}",
-                EmailAziendale = "email@email.com",
+                EmailAziendale = $"email{i}@gmail.com",
                 Password = "Password123!",
                 Ruolo = i % 2 == 0 ? "Admin" : "User",
                 Salario = 1500.00m + (i * 100),

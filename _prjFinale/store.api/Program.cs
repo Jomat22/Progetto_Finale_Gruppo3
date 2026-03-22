@@ -62,7 +62,8 @@ public class Program {
             app.MapOpenApi();
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection(); // - Non mi serve il redirect
+        app.UseRouting();
         app.MapControllers();
         app.Run();
     } 

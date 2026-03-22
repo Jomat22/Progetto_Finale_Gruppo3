@@ -1,0 +1,10 @@
+@baseUrl = http://localhost:5102/api/Person
+
+### Test (Esistente)
+DELETE {{baseUrl}}/RSSMRA80A01H501U
+
+### Test (Inesistente)
+DELETE {{baseUrl}}/UTENTEINESISTE..
+
+### Test (Errato)
+DELETE {{baseUrl}}/ERRORE

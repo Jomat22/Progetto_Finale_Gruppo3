@@ -7,17 +7,24 @@ public class PersonRepository(DataContext context)
 {
     private readonly DataContext _context = context;
 
-    public async Task<Person?> GetPersonByTaxCode_repo(string codiceFiscale, bool asNoTracking = false) {
+    public async Task<Person?> GetPersonByTaxCode_repo(string codiceFiscale, bool asNoTracking = false) 
+    {
         try
         {
             IQueryable<Person> query = _context.People.AsQueryable();
             if (asNoTracking) { query.AsNoTracking(); }
 
-            return await query.FirstOrDefaultAsync(e => e.CodiceFiscale.Equals(codiceFiscale, StringComparison.CurrentCultureIgnoreCase));
+            return await query.FirstOrDefaultAsync(e => e.CodiceFiscale.ToLower() == codiceFiscale.ToLower());
         } catch (Exception) { throw; }
     }
     
-    public async Task<IEnumerable<Person>> GetAllPerson_repo(bool asNoTracking = false) 
+    public async Task<IEnumerable<Person>> GetAllPerson_repo(bool asNoTracking = true) // 'true' ↓
+            /*  Per non dimenticare...
+                Dev 1: "Oddio, la query è lentissima... il server sta ESPLODENDO!"
+                Dev 2: "STACCAH! STACCAH TUTTOH! CI STANNO TRACCIANDO! EF CORE CI STA TRACCIANDO OGNI SINGOLA PROPERTY!"
+                Dev 1: "Ma io volevo solo fare una lista... non volevo salvarle!"
+                Dev 2: "NON IMPORTA! IL CHANGE TRACKER È GIÀ PARTITOH! STACCA IL DATACONTEXT! STACCA LA CONNESSIONE AL DB! CI STANNO TRACCIANDO, CHIUDI TUTTOOOOH!" 
+            */
     {
         try 
         {
@@ -28,7 +35,8 @@ public class PersonRepository(DataContext context)
         } catch(Exception) { throw; }
     }
     
-    public async Task<int> PostPerson_repo(Person person) {
+    public async Task<int> PostPerson_repo(Person person) 
+    {
         try
         {
             _context.People.Add(person);
@@ -36,7 +44,8 @@ public class PersonRepository(DataContext context)
         } catch (Exception) { throw; }
     }
     
-    public async Task<int> PutPerson_repo(Person person) {
+    public async Task<int> PutPerson_repo() 
+    {
         try
         {
             return await _context.SaveChangesAsync();

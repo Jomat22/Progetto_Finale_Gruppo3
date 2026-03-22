@@ -59,7 +59,7 @@ public class PersonService(PersonRepository repo, IMapper mapper)
             DataHelper.InputDataFormatUppercase(existingPerson);
             DataHelper.InputDataUpdateTimestamp(existingPerson);
             
-            int numRows = await _repo.PostPerson_repo(existingPerson);
+            int numRows = await _repo.PutPerson_repo(); // Non serve passarlo perchè ha già tracciato i cambiamenti i nmemoria. Chiamo solo il 'SaveChanges'
             if (numRows is 0) { return ApiResponseFactory.SuccessNoChanges(existingPerson); }
 
             return ApiResponseFactory.Success(existingPerson);

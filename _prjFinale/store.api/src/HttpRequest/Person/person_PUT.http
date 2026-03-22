@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:5102/api/Person
 
-### Test => Creazione Persona (Successo)
-POST {{baseUrl}}
+### Test => Update Persona (Successo)
+PUT {{baseUrl}}
 Content-Type: application/json
 
 {
@@ -18,22 +18,40 @@ Content-Type: application/json
   "email": "mario.rossi@example.com"
 }
 
-### Test => Errore di Validazione (Esempio CF corto e Sesso errato)
-POST {{baseUrl}}
+### Test => Utente inesistente
+PUT {{baseUrl}}
 Content-Type: application/json
 
 {
-  "codiceFiscale": "CORTO",
+  "codiceFiscale": "UTENTEINESISTE..",
   "nome": "Mario",
   "cognome": "Rossi",
-  "sesso": "X",
+  "sesso": "M",
   "dataNascita": "1980-01-01",
   "citta": "Roma",
   "provincia": "RM",
   "codicePostale": "00100",
   "indirizzo": "Via Roma 1",
   "numeroContatto": "333",
-  "email": "email-non-valida"
+  "email": "mario.rossi@example.com"
+}
+
+### Test => Errore di Validazione (Esempio CF corto e Sesso errato)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+    "codiceFiscale": "CORTO",
+    "nome": "Mario",
+    "cognome": "Rossi",
+    "sesso": "X",
+    "dataNascita": "1980-01-01",
+    "citta": "Roma",
+    "provincia": "RM",
+    "codicePostale": "00100",
+    "indirizzo": "Via Roma 1",
+    "numeroContatto": "333",
+    "email": "email-non-valida"
 }
 
 

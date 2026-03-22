@@ -12,7 +12,7 @@ using store.api.src.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260322002200_Init")]
+    [Migration("20260322020215_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -510,6 +510,9 @@ namespace store.api.Migrations
                     b.HasIndex("CodiceMeccanografico")
                         .IsUnique();
 
+                    b.HasIndex("EmailAziendale")
+                        .IsUnique();
+
                     b.HasIndex("PersonId")
                         .IsUnique();
 
@@ -521,7 +524,7 @@ namespace store.api.Migrations
                             Id = 1,
                             CodiceMeccanografico = "0000000001",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email1@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -534,7 +537,7 @@ namespace store.api.Migrations
                             Id = 2,
                             CodiceMeccanografico = "0000000002",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email2@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -547,7 +550,7 @@ namespace store.api.Migrations
                             Id = 3,
                             CodiceMeccanografico = "0000000003",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email3@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -560,7 +563,7 @@ namespace store.api.Migrations
                             Id = 4,
                             CodiceMeccanografico = "0000000004",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email4@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -573,7 +576,7 @@ namespace store.api.Migrations
                             Id = 5,
                             CodiceMeccanografico = "0000000005",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email5@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -586,7 +589,7 @@ namespace store.api.Migrations
                             Id = 6,
                             CodiceMeccanografico = "0000000006",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email6@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -599,7 +602,7 @@ namespace store.api.Migrations
                             Id = 7,
                             CodiceMeccanografico = "0000000007",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email7@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -612,7 +615,7 @@ namespace store.api.Migrations
                             Id = 8,
                             CodiceMeccanografico = "0000000008",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email8@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -625,7 +628,7 @@ namespace store.api.Migrations
                             Id = 9,
                             CodiceMeccanografico = "0000000009",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email9@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -638,7 +641,7 @@ namespace store.api.Migrations
                             Id = 10,
                             CodiceMeccanografico = "0000000010",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            EmailAziendale = "email@email.com",
+                            EmailAziendale = "email10@gmail.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Password = "Password123!",
@@ -741,9 +744,6 @@ namespace store.api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CodiceFiscale")
-                        .IsUnique();
-
-                    b.HasIndex("Email")
                         .IsUnique();
 
                     b.ToTable("persone", (string)null);

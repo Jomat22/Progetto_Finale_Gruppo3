@@ -70,11 +70,14 @@ public class PersonController(PersonService serv) : ControllerBase
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
     }
     
-    /* [HttpPut]
-    public async Task<IActionResult> PutPerson_cont()
+    [HttpPut]
+    public async Task<IActionResult> PutPerson_cont([FromBody] PersonUpdateRequest request)
     {
         try 
         {
+            if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
+            ApiResponseBase response = await _serv.PutPerson_serv(request);
+            
             return response switch
             {
                 ApiResponse_Success<Person> success => Ok(success),
@@ -82,13 +85,18 @@ public class PersonController(PersonService serv) : ControllerBase
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
-    } */
+    }
     
-    /* [HttpDelete]
-    public async Task<IActionResult> DeletePerson_cont()
+    [HttpDelete("{codiceFiscale}")]
+    public async Task<IActionResult> DeletePerson_cont([FromRoute] string codiceFiscale)
     {
-        try 
+        try
         {
+            PersonDeleteRequest request = new() { CodiceFiscale = codiceFiscale };
+            if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
+
+            ApiResponseBase response = await _serv.DeletePerson_serv(request.CodiceFiscale);
+            
             return response switch
             {
                 ApiResponse_Success<Person> success => Ok(success),
@@ -96,5 +104,5 @@ public class PersonController(PersonService serv) : ControllerBase
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
-    } */
+    }
 }
