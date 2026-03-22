@@ -62,12 +62,13 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
             entity.Property(e => e.CodiceMeccanografico).HasColumnOrder(3).HasColumnName("codice_meccanografico").HasColumnType("varchar(10)");
-            entity.Property(e => e.Password).HasColumnOrder(4).HasColumnName("password").HasColumnType("varchar(24)");
-            entity.Property(e => e.Ruolo).HasColumnOrder(5).HasColumnName("ruolo").HasColumnType("varchar(50)");
-            entity.Property(e => e.Salario).HasColumnOrder(6).HasColumnName("salario").HasColumnType("decimal(18,2)");
-            entity.Property(e => e.IsDeleted).HasColumnOrder(7).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
-            entity.Property(e => e.CreatedAt).HasColumnOrder(8).HasColumnName("created_at").HasColumnType("datetime(6)");
-            entity.Property(e => e.ModifiedAt).HasColumnOrder(9).HasColumnName("modified_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.EmailAziendale).HasColumnOrder(4).HasColumnName("email_aziendale").HasColumnType("varchar(255)");
+            entity.Property(e => e.Password).HasColumnOrder(5).HasColumnName("password").HasColumnType("varchar(24)");
+            entity.Property(e => e.Ruolo).HasColumnOrder(6).HasColumnName("ruolo").HasColumnType("varchar(50)");
+            entity.Property(e => e.Salario).HasColumnOrder(7).HasColumnName("salario").HasColumnType("decimal(18,2)");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(8).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(9).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(10).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
         
         modelBuilder.Entity<Product>(entity =>
@@ -128,7 +129,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 Id = i,
                 PersonId = i, // FK verso Person 1-10
                 CodiceMeccanografico = $"{i:D10}",
-                Password = "SecurePassword123!",
+                EmailAziendale = "email@email.com",
+                Password = "Password123!",
                 Ruolo = i % 2 == 0 ? "Admin" : "User",
                 Salario = 1500.00m + (i * 100),
                 IsDeleted = false,

@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 namespace store.api.src.Dto.Person;
 
-public class PersoUpdateRequest
+public class PersonUpdateRequest
 {
     // Commentato perché specifico dell'admin non ancora implementato
     /* [Required(ErrorMessage = "Il Codice Fiscale è obbligatorio.")]

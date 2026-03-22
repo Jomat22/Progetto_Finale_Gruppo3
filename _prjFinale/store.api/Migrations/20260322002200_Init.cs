@@ -111,6 +111,8 @@ namespace store.api.Migrations
                     person_id = table.Column<int>(type: "int", nullable: false),
                     codice_meccanografico = table.Column<string>(type: "varchar(10)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    email_aziendale = table.Column<string>(type: "varchar(255)", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     password = table.Column<string>(type: "varchar(24)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ruolo = table.Column<string>(type: "varchar(50)", nullable: false)
@@ -215,19 +217,19 @@ namespace store.api.Migrations
 
             migrationBuilder.InsertData(
                 table: "dipendenti",
-                columns: new[] { "id", "codice_meccanografico", "created_at", "is_deleted", "modified_at", "password", "person_id", "ruolo", "salario" },
+                columns: new[] { "id", "codice_meccanografico", "created_at", "email_aziendale", "is_deleted", "modified_at", "password", "person_id", "ruolo", "salario" },
                 values: new object[,]
                 {
-                    { 1, "0000000001", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 1, "User", 1600.00m },
-                    { 2, "0000000002", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 2, "Admin", 1700.00m },
-                    { 3, "0000000003", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 3, "User", 1800.00m },
-                    { 4, "0000000004", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 4, "Admin", 1900.00m },
-                    { 5, "0000000005", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 5, "User", 2000.00m },
-                    { 6, "0000000006", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 6, "Admin", 2100.00m },
-                    { 7, "0000000007", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 7, "User", 2200.00m },
-                    { 8, "0000000008", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 8, "Admin", 2300.00m },
-                    { 9, "0000000009", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 9, "User", 2400.00m },
-                    { 10, "0000000010", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "SecurePassword123!", 10, "Admin", 2500.00m }
+                    { 1, "0000000001", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 1, "User", 1600.00m },
+                    { 2, "0000000002", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 2, "Admin", 1700.00m },
+                    { 3, "0000000003", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 3, "User", 1800.00m },
+                    { 4, "0000000004", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 4, "Admin", 1900.00m },
+                    { 5, "0000000005", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 5, "User", 2000.00m },
+                    { 6, "0000000006", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 6, "Admin", 2100.00m },
+                    { 7, "0000000007", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 7, "User", 2200.00m },
+                    { 8, "0000000008", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 8, "Admin", 2300.00m },
+                    { 9, "0000000009", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 9, "User", 2400.00m },
+                    { 10, "0000000010", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "email@email.com", false, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "Password123!", 10, "Admin", 2500.00m }
                 });
 
             migrationBuilder.CreateIndex(

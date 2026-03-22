@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using store.api.src.Data;
 
@@ -11,9 +12,11 @@ using store.api.src.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260322002200_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace store.api.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
-            modelBuilder.Entity("store.core._.Domain.Entity.Catalog.Product", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.Catalog.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -274,7 +277,7 @@ namespace store.api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("store.core._.Domain.Entity.User.Client", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.User.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -443,7 +446,7 @@ namespace store.api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("store.core._.Domain.Entity.User.Employee", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.User.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -462,23 +465,29 @@ namespace store.api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
-                        .HasColumnOrder(8);
+                        .HasColumnOrder(9);
+
+                    b.Property<string>("EmailAziendale")
+                        .IsRequired()
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("email_aziendale")
+                        .HasColumnOrder(4);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at")
-                        .HasColumnOrder(9);
+                        .HasColumnOrder(10);
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("varchar(24)")
                         .HasColumnName("password")
-                        .HasColumnOrder(4);
+                        .HasColumnOrder(5);
 
                     b.Property<int>("PersonId")
                         .HasColumnType("int")
@@ -489,12 +498,12 @@ namespace store.api.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(50)")
                         .HasColumnName("ruolo")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<decimal>("Salario")
                         .HasColumnType("decimal(18,2)")
                         .HasColumnName("salario")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.HasKey("Id");
 
@@ -512,9 +521,10 @@ namespace store.api.Migrations
                             Id = 1,
                             CodiceMeccanografico = "0000000001",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 1,
                             Ruolo = "User",
                             Salario = 1600.00m
@@ -524,9 +534,10 @@ namespace store.api.Migrations
                             Id = 2,
                             CodiceMeccanografico = "0000000002",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 2,
                             Ruolo = "Admin",
                             Salario = 1700.00m
@@ -536,9 +547,10 @@ namespace store.api.Migrations
                             Id = 3,
                             CodiceMeccanografico = "0000000003",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 3,
                             Ruolo = "User",
                             Salario = 1800.00m
@@ -548,9 +560,10 @@ namespace store.api.Migrations
                             Id = 4,
                             CodiceMeccanografico = "0000000004",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 4,
                             Ruolo = "Admin",
                             Salario = 1900.00m
@@ -560,9 +573,10 @@ namespace store.api.Migrations
                             Id = 5,
                             CodiceMeccanografico = "0000000005",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 5,
                             Ruolo = "User",
                             Salario = 2000.00m
@@ -572,9 +586,10 @@ namespace store.api.Migrations
                             Id = 6,
                             CodiceMeccanografico = "0000000006",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 6,
                             Ruolo = "Admin",
                             Salario = 2100.00m
@@ -584,9 +599,10 @@ namespace store.api.Migrations
                             Id = 7,
                             CodiceMeccanografico = "0000000007",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 7,
                             Ruolo = "User",
                             Salario = 2200.00m
@@ -596,9 +612,10 @@ namespace store.api.Migrations
                             Id = 8,
                             CodiceMeccanografico = "0000000008",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 8,
                             Ruolo = "Admin",
                             Salario = 2300.00m
@@ -608,9 +625,10 @@ namespace store.api.Migrations
                             Id = 9,
                             CodiceMeccanografico = "0000000009",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 9,
                             Ruolo = "User",
                             Salario = 2400.00m
@@ -620,16 +638,17 @@ namespace store.api.Migrations
                             Id = 10,
                             CodiceMeccanografico = "0000000010",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            EmailAziendale = "email@email.com",
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Password = "SecurePassword123!",
+                            Password = "Password123!",
                             PersonId = 10,
                             Ruolo = "Admin",
                             Salario = 2500.00m
                         });
                 });
 
-            modelBuilder.Entity("store.core._.Domain.Entity.User.Person", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.User.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -1272,22 +1291,22 @@ namespace store.api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("store.core._.Domain.Entity.User.Client", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.User.Client", b =>
                 {
-                    b.HasOne("store.core._.Domain.Entity.User.Person", "Person")
+                    b.HasOne("store.core.src.Domain.Entity.User.Person", "Person")
                         .WithOne()
-                        .HasForeignKey("store.core._.Domain.Entity.User.Client", "PersonId")
+                        .HasForeignKey("store.core.src.Domain.Entity.User.Client", "PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Person");
                 });
 
-            modelBuilder.Entity("store.core._.Domain.Entity.User.Employee", b =>
+            modelBuilder.Entity("store.core.src.Domain.Entity.User.Employee", b =>
                 {
-                    b.HasOne("store.core._.Domain.Entity.User.Person", "Person")
+                    b.HasOne("store.core.src.Domain.Entity.User.Person", "Person")
                         .WithOne()
-                        .HasForeignKey("store.core._.Domain.Entity.User.Employee", "PersonId")
+                        .HasForeignKey("store.core.src.Domain.Entity.User.Employee", "PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
