@@ -3,6 +3,7 @@ namespace store.api.src.Dto.Person;
 
 public class PersonUpdateRequest
 {
+    // 'CodiceFiscale' usato ai fini di verifica esistenza
     [Required(ErrorMessage = "Il Codice Fiscale è obbligatorio.")]
     [StringLength(16, MinimumLength = 16, ErrorMessage = "Il Codice Fiscale deve essere di 16 caratteri.")]
     public string CodiceFiscale { get; set; } = default!;

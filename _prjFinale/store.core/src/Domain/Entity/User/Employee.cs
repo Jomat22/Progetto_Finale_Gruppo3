@@ -10,7 +10,7 @@ public class Employee : BaseEntity
     public decimal Salario { get; set; }
 
     // Proprietà navigazione
-    public Person? Person { get; set; }
+    public virtual Person? Person { get; set; }
 
     public Employee() : base() { }
     public Employee(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, int personId, 

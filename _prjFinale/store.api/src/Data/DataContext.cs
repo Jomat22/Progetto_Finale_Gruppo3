@@ -8,6 +8,9 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
     public DbSet<Person> People => Set<Person>();
     public DbSet<Client> Clients => Set<Client>();
     public DbSet<Employee> Employees => Set<Employee>();
+    public DbSet<Product> Products => Set<Product>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<ReceiptDetail> ReceiptDetails => Set<ReceiptDetail>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -33,24 +36,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.CreatedAt).HasColumnOrder(14).HasColumnName("created_at").HasColumnType("datetime(6)");
             entity.Property(e => e.ModifiedAt).HasColumnOrder(15).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
-        
-        modelBuilder.Entity<Client>(entity =>
-        {
-            entity.ToTable("clienti");
-            entity.HasKey(pk => pk.Id);
-            entity.HasOne(np => np.Person).WithOne().HasForeignKey<Client>(fk => fk.PersonId).OnDelete(DeleteBehavior.Cascade);;
-            entity.HasIndex(e => e.CodiceCliente).IsUnique();
 
-            entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
-            entity.Property(e => e.CodiceCliente).HasColumnOrder(3).HasColumnName("codice_cliente").HasColumnType("varchar(20)");
-            entity.Property(e => e.IsFidelizzato).HasColumnOrder(4).HasColumnName("is_fidelizzato").HasColumnType("tinyint(1)");
-            entity.Property(e => e.IsIscrittoNewsletter).HasColumnOrder(5).HasColumnName("is_iscritto_newsletter").HasColumnType("tinyint(1)");
-            entity.Property(e => e.IsDeleted).HasColumnOrder(6).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
-            entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
-            entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
-        });
-        
         modelBuilder.Entity<Employee>(entity =>
         {
             entity.ToTable("dipendenti");
@@ -60,7 +46,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.HasIndex(e => e.EmailAziendale).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
+            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();
             entity.Property(e => e.CodiceMeccanografico).HasColumnOrder(3).HasColumnName("codice_meccanografico").HasColumnType("varchar(10)");
             entity.Property(e => e.EmailAziendale).HasColumnOrder(4).HasColumnName("email_aziendale").HasColumnType("varchar(255)");
             entity.Property(e => e.Password).HasColumnOrder(5).HasColumnName("password").HasColumnType("varchar(24)");
@@ -71,6 +57,23 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.ModifiedAt).HasColumnOrder(10).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
         
+        modelBuilder.Entity<Client>(entity =>
+        {
+            entity.ToTable("clienti");
+            entity.HasKey(pk => pk.Id);
+            entity.HasOne(np => np.Person).WithOne().HasForeignKey<Client>(fk => fk.PersonId).OnDelete(DeleteBehavior.Cascade);;
+            entity.HasIndex(e => e.CodiceCliente).IsUnique();
+
+            entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
+            entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();
+            entity.Property(e => e.CodiceCliente).HasColumnOrder(3).HasColumnName("codice_cliente").HasColumnType("varchar(20)");
+            entity.Property(e => e.IsFidelizzato).HasColumnOrder(4).HasColumnName("is_fidelizzato").HasColumnType("tinyint(1)");
+            entity.Property(e => e.IsIscrittoNewsletter).HasColumnOrder(5).HasColumnName("is_iscritto_newsletter").HasColumnType("tinyint(1)");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(6).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
+        });
+        
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("prodotti");
@@ -78,14 +81,45 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.HasIndex(e => e.Sku).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.Sku).HasColumnOrder(2).HasColumnName("sku").HasColumnType("varchar(30)").IsRequired();;
+            entity.Property(e => e.Sku).HasColumnOrder(2).HasColumnName("sku").HasColumnType("varchar(30)").IsRequired();
             entity.Property(e => e.Nome).HasColumnOrder(3).HasColumnName("nome").HasColumnType("varchar(100)");
-            entity.Property(e => e.Qnt).HasColumnOrder(4).HasColumnName("qnt").HasColumnType("int");
-            entity.Property(e => e.IsDeleted).HasColumnOrder(5).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
-            entity.Property(e => e.CreatedAt).HasColumnOrder(6).HasColumnName("created_at").HasColumnType("datetime(6)");
-            entity.Property(e => e.ModifiedAt).HasColumnOrder(7).HasColumnName("modified_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.Prezzo).HasColumnOrder(4).HasColumnName("prezzo").HasColumnType("decimal(10,2)");
+            entity.Property(e => e.Quantita).HasColumnOrder(5).HasColumnName("quantita").HasColumnType("int");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(6).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
 
+        modelBuilder.Entity<Receipt>(entity =>
+        {
+            entity.ToTable("scontrini");
+            entity.HasKey(e => e.Id);
+
+            entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
+            entity.Property(e => e.DataEmissione).HasColumnOrder(2).HasColumnName("data_emissione").HasColumnType("datetime(6)").IsRequired();
+            entity.Property(e => e.TotaleDefinitivo).HasColumnOrder(3).HasColumnName("totale_definitivo").HasColumnType("decimal(10,2)").IsRequired();
+            entity.Property(e => e.MetodoPagamento).HasColumnOrder(4).HasColumnName("metodo_pagamento").HasColumnType("varchar(50)");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(6).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
+        });
+
+        modelBuilder.Entity<ReceiptDetail>(entity =>
+        {
+            entity.ToTable("scontrini_dettagli");
+            entity.HasKey(e => e.Id);
+            entity.HasOne(np => np.Ricevuta).WithMany(np => np.RicevutaDettagli).HasForeignKey(fk => fk.RicevutaId).OnDelete(DeleteBehavior.Cascade); // Se elimini lo scontrino, elimina i dettagli
+            entity.HasOne(np => np.Prodotto).WithMany().HasForeignKey(fk => fk.ProdottoId);
+
+            entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
+            entity.Property(e => e.RicevutaId).HasColumnOrder(2).HasColumnName("ricevuta_id").HasColumnType("int").IsRequired();
+            entity.Property(e => e.ProdottoId).HasColumnOrder(3).HasColumnName("prodotto_id").HasColumnType("int").IsRequired();
+            entity.Property(e => e.Quantita).HasColumnOrder(4).HasColumnName("quantita").HasColumnType("int");
+            entity.Property(e => e.PrezzoTotale).HasColumnOrder(5).HasColumnName("prezzo_totale").HasColumnType("decimal(10,2)");
+            entity.Property(e => e.IsDeleted).HasColumnOrder(6).HasColumnName("is_deleted").HasColumnType("tinyint(1)");
+            entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
+            entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
+        });
 
     // ====================================================================================================
         // 1. SEED PERSONE (30 RECORD)
@@ -168,13 +202,66 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
                 Id = i,
                 Sku = $"SKU-{i:D5}", // Es: SKU-00001, SKU-00002... (max 30 caratteri come da tua config)
                 Nome = $"Prodotto Esempio {i}",
-                Qnt = i * 10, // Quantità: 10, 20, 30...
+                Prezzo = i,
+                Quantita = i * 10, // Quantità: 10, 20, 30...
                 IsDeleted = false,
                 CreatedAt = default,
                 ModifiedAt = default
             });
         }
         modelBuilder.Entity<Product>().HasData(prodotti);
+
+        // 5. SEED SCONTRINI (20 RECORD)
+        var scontrini = new List<Receipt>();
+        for (int i = 1; i <= 20; i++)
+        {
+            scontrini.Add(new Receipt
+            {
+                Id = i,
+                DataEmissione = new DateTime(2024, 1, 1).AddDays(i), // Date scalate nel 2024
+                MetodoPagamento = i % 2 == 0 ? "Contanti" : "Carta di Credito",
+                TotaleDefinitivo = 0, // Lo lasceremo a 0 o calcolato, ma nel Seed serve un valore
+                IsDeleted = false,
+                CreatedAt = new DateTime(2024, 1, 1),
+                ModifiedAt = new DateTime(2024, 1, 1)
+            });
+        }
+        modelBuilder.Entity<Receipt>().HasData(scontrini);
+
+        // 6. SEED SCONTRINI DETTAGLI (Esempio: 2 prodotti per ogni scontrino)
+        var dettagli = new List<ReceiptDetail>();
+        int dettaglioIdCounter = 1;
+
+        for (int i = 1; i <= 20; i++)
+        {
+            // Aggiungiamo il primo prodotto alla ricevuta
+            dettagli.Add(new ReceiptDetail
+            {
+                Id = dettaglioIdCounter++,
+                RicevutaId = i,      // FK verso lo scontrino corrente
+                ProdottoId = i,      // Usa il prodotto con ID uguale allo scontrino
+                Quantita = 1,
+                PrezzoTotale = i, // Prezzo fittizio basato sull'ID del prodotto
+                IsDeleted = false,
+                CreatedAt = new DateTime(2024, 1, 1),
+                ModifiedAt = new DateTime(2024, 1, 1)
+            });
+
+            // Aggiungiamo un secondo prodotto alla stessa ricevuta (es: il prodotto successivo)
+            int secondoProdottoId = (i < 20) ? i + 1 : 1; 
+            dettagli.Add(new ReceiptDetail
+            {
+                Id = dettaglioIdCounter++,
+                RicevutaId = i,
+                ProdottoId = secondoProdottoId,
+                Quantita = 2,
+                PrezzoTotale = (decimal)secondoProdottoId * 2,
+                IsDeleted = false,
+                CreatedAt = new DateTime(2024, 1, 1),
+                ModifiedAt = new DateTime(2024, 1, 1)
+            });
+        }
+        modelBuilder.Entity<ReceiptDetail>().HasData(dettagli);
     // ====================================================================================================
     }
 }

@@ -8,7 +8,7 @@ public class Client : BaseEntity
     public bool IsIscrittoNewsletter { get; set; }
 
     // Proprietà navigazione
-    public Person? Person { get; set; }
+    public virtual Person? Person { get; set; }
 
     public Client() : base() { }
     public Client(int id, bool isDeleted, DateTime createdAt, DateTime modifiedAt, 

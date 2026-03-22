@@ -8,9 +8,9 @@ namespace store.api.src.Controller;
 
 [ApiController]
 [Route("api/[Controller]")]
-public class PersonController(PersonService serv) : ControllerBase
+public class EmployeeController(EmployeeService serv) : ControllerBase
 {
-    private readonly PersonService _serv = serv;
+    private readonly EmployeeService _serv = serv;
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

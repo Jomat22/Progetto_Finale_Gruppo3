@@ -12,7 +12,7 @@ using store.api.src.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260322020215_Init")]
+    [Migration("20260322191040_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -38,17 +38,17 @@ namespace store.api.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("created_at")
-                        .HasColumnOrder(6);
+                        .HasColumnOrder(7);
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)")
                         .HasColumnName("is_deleted")
-                        .HasColumnOrder(5);
+                        .HasColumnOrder(6);
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)")
                         .HasColumnName("modified_at")
-                        .HasColumnOrder(7);
+                        .HasColumnOrder(8);
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -56,10 +56,15 @@ namespace store.api.Migrations
                         .HasColumnName("nome")
                         .HasColumnOrder(3);
 
-                    b.Property<int>("Qnt")
-                        .HasColumnType("int")
-                        .HasColumnName("qnt")
+                    b.Property<decimal>("Prezzo")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("prezzo")
                         .HasColumnOrder(4);
+
+                    b.Property<int>("Quantita")
+                        .HasColumnType("int")
+                        .HasColumnName("quantita")
+                        .HasColumnOrder(5);
 
                     b.Property<string>("Sku")
                         .IsRequired()
@@ -82,7 +87,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 1",
-                            Qnt = 10,
+                            Prezzo = 1m,
+                            Quantita = 10,
                             Sku = "SKU-00001"
                         },
                         new
@@ -92,7 +98,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 2",
-                            Qnt = 20,
+                            Prezzo = 2m,
+                            Quantita = 20,
                             Sku = "SKU-00002"
                         },
                         new
@@ -102,7 +109,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 3",
-                            Qnt = 30,
+                            Prezzo = 3m,
+                            Quantita = 30,
                             Sku = "SKU-00003"
                         },
                         new
@@ -112,7 +120,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 4",
-                            Qnt = 40,
+                            Prezzo = 4m,
+                            Quantita = 40,
                             Sku = "SKU-00004"
                         },
                         new
@@ -122,7 +131,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 5",
-                            Qnt = 50,
+                            Prezzo = 5m,
+                            Quantita = 50,
                             Sku = "SKU-00005"
                         },
                         new
@@ -132,7 +142,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 6",
-                            Qnt = 60,
+                            Prezzo = 6m,
+                            Quantita = 60,
                             Sku = "SKU-00006"
                         },
                         new
@@ -142,7 +153,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 7",
-                            Qnt = 70,
+                            Prezzo = 7m,
+                            Quantita = 70,
                             Sku = "SKU-00007"
                         },
                         new
@@ -152,7 +164,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 8",
-                            Qnt = 80,
+                            Prezzo = 8m,
+                            Quantita = 80,
                             Sku = "SKU-00008"
                         },
                         new
@@ -162,7 +175,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 9",
-                            Qnt = 90,
+                            Prezzo = 9m,
+                            Quantita = 90,
                             Sku = "SKU-00009"
                         },
                         new
@@ -172,7 +186,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 10",
-                            Qnt = 100,
+                            Prezzo = 10m,
+                            Quantita = 100,
                             Sku = "SKU-00010"
                         },
                         new
@@ -182,7 +197,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 11",
-                            Qnt = 110,
+                            Prezzo = 11m,
+                            Quantita = 110,
                             Sku = "SKU-00011"
                         },
                         new
@@ -192,7 +208,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 12",
-                            Qnt = 120,
+                            Prezzo = 12m,
+                            Quantita = 120,
                             Sku = "SKU-00012"
                         },
                         new
@@ -202,7 +219,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 13",
-                            Qnt = 130,
+                            Prezzo = 13m,
+                            Quantita = 130,
                             Sku = "SKU-00013"
                         },
                         new
@@ -212,7 +230,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 14",
-                            Qnt = 140,
+                            Prezzo = 14m,
+                            Quantita = 140,
                             Sku = "SKU-00014"
                         },
                         new
@@ -222,7 +241,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 15",
-                            Qnt = 150,
+                            Prezzo = 15m,
+                            Quantita = 150,
                             Sku = "SKU-00015"
                         },
                         new
@@ -232,7 +252,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 16",
-                            Qnt = 160,
+                            Prezzo = 16m,
+                            Quantita = 160,
                             Sku = "SKU-00016"
                         },
                         new
@@ -242,7 +263,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 17",
-                            Qnt = 170,
+                            Prezzo = 17m,
+                            Quantita = 170,
                             Sku = "SKU-00017"
                         },
                         new
@@ -252,7 +274,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 18",
-                            Qnt = 180,
+                            Prezzo = 18m,
+                            Quantita = 180,
                             Sku = "SKU-00018"
                         },
                         new
@@ -262,7 +285,8 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 19",
-                            Qnt = 190,
+                            Prezzo = 19m,
+                            Quantita = 190,
                             Sku = "SKU-00019"
                         },
                         new
@@ -272,8 +296,753 @@ namespace store.api.Migrations
                             IsDeleted = false,
                             ModifiedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Nome = "Prodotto Esempio 20",
-                            Qnt = 200,
+                            Prezzo = 20m,
+                            Quantita = 200,
                             Sku = "SKU-00020"
+                        });
+                });
+
+            modelBuilder.Entity("store.core.src.Domain.Entity.Catalog.Receipt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasColumnOrder(1);
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at")
+                        .HasColumnOrder(7);
+
+                    b.Property<DateTime>("DataEmissione")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("data_emissione")
+                        .HasColumnOrder(2);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_deleted")
+                        .HasColumnOrder(6);
+
+                    b.Property<string>("MetodoPagamento")
+                        .IsRequired()
+                        .HasColumnType("varchar(50)")
+                        .HasColumnName("metodo_pagamento")
+                        .HasColumnOrder(4);
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at")
+                        .HasColumnOrder(8);
+
+                    b.Property<decimal>("TotaleDefinitivo")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("totale_definitivo")
+                        .HasColumnOrder(3);
+
+                    b.HasKey("Id");
+
+                    b.ToTable("scontrini", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 2, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 3, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 4, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 7, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 8, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 12, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 14, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 16, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 17, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 18, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 19, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 20, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Carta di Credito",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            DataEmissione = new DateTime(2024, 1, 21, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            MetodoPagamento = "Contanti",
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            TotaleDefinitivo = 0m
+                        });
+                });
+
+            modelBuilder.Entity("store.core.src.Domain.Entity.Catalog.ReceiptDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("id")
+                        .HasColumnOrder(1);
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_at")
+                        .HasColumnOrder(7);
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("tinyint(1)")
+                        .HasColumnName("is_deleted")
+                        .HasColumnOrder(6);
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("modified_at")
+                        .HasColumnOrder(8);
+
+                    b.Property<decimal>("PrezzoTotale")
+                        .HasColumnType("decimal(10,2)")
+                        .HasColumnName("prezzo_totale")
+                        .HasColumnOrder(5);
+
+                    b.Property<int>("ProdottoId")
+                        .HasColumnType("int")
+                        .HasColumnName("prodotto_id")
+                        .HasColumnOrder(3);
+
+                    b.Property<int>("Quantita")
+                        .HasColumnType("int")
+                        .HasColumnName("quantita")
+                        .HasColumnOrder(4);
+
+                    b.Property<int>("RicevutaId")
+                        .HasColumnType("int")
+                        .HasColumnName("ricevuta_id")
+                        .HasColumnOrder(2);
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProdottoId");
+
+                    b.HasIndex("RicevutaId");
+
+                    b.ToTable("scontrini_dettagli", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 1m,
+                            ProdottoId = 1,
+                            Quantita = 1,
+                            RicevutaId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 4m,
+                            ProdottoId = 2,
+                            Quantita = 2,
+                            RicevutaId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 2m,
+                            ProdottoId = 2,
+                            Quantita = 1,
+                            RicevutaId = 2
+                        },
+                        new
+                        {
+                            Id = 4,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 6m,
+                            ProdottoId = 3,
+                            Quantita = 2,
+                            RicevutaId = 2
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 3m,
+                            ProdottoId = 3,
+                            Quantita = 1,
+                            RicevutaId = 3
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 8m,
+                            ProdottoId = 4,
+                            Quantita = 2,
+                            RicevutaId = 3
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 4m,
+                            ProdottoId = 4,
+                            Quantita = 1,
+                            RicevutaId = 4
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 10m,
+                            ProdottoId = 5,
+                            Quantita = 2,
+                            RicevutaId = 4
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 5m,
+                            ProdottoId = 5,
+                            Quantita = 1,
+                            RicevutaId = 5
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 12m,
+                            ProdottoId = 6,
+                            Quantita = 2,
+                            RicevutaId = 5
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 6m,
+                            ProdottoId = 6,
+                            Quantita = 1,
+                            RicevutaId = 6
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 14m,
+                            ProdottoId = 7,
+                            Quantita = 2,
+                            RicevutaId = 6
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 7m,
+                            ProdottoId = 7,
+                            Quantita = 1,
+                            RicevutaId = 7
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 16m,
+                            ProdottoId = 8,
+                            Quantita = 2,
+                            RicevutaId = 7
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 8m,
+                            ProdottoId = 8,
+                            Quantita = 1,
+                            RicevutaId = 8
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 18m,
+                            ProdottoId = 9,
+                            Quantita = 2,
+                            RicevutaId = 8
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 9m,
+                            ProdottoId = 9,
+                            Quantita = 1,
+                            RicevutaId = 9
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 20m,
+                            ProdottoId = 10,
+                            Quantita = 2,
+                            RicevutaId = 9
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 10m,
+                            ProdottoId = 10,
+                            Quantita = 1,
+                            RicevutaId = 10
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 22m,
+                            ProdottoId = 11,
+                            Quantita = 2,
+                            RicevutaId = 10
+                        },
+                        new
+                        {
+                            Id = 21,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 11m,
+                            ProdottoId = 11,
+                            Quantita = 1,
+                            RicevutaId = 11
+                        },
+                        new
+                        {
+                            Id = 22,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 24m,
+                            ProdottoId = 12,
+                            Quantita = 2,
+                            RicevutaId = 11
+                        },
+                        new
+                        {
+                            Id = 23,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 12m,
+                            ProdottoId = 12,
+                            Quantita = 1,
+                            RicevutaId = 12
+                        },
+                        new
+                        {
+                            Id = 24,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 26m,
+                            ProdottoId = 13,
+                            Quantita = 2,
+                            RicevutaId = 12
+                        },
+                        new
+                        {
+                            Id = 25,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 13m,
+                            ProdottoId = 13,
+                            Quantita = 1,
+                            RicevutaId = 13
+                        },
+                        new
+                        {
+                            Id = 26,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 28m,
+                            ProdottoId = 14,
+                            Quantita = 2,
+                            RicevutaId = 13
+                        },
+                        new
+                        {
+                            Id = 27,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 14m,
+                            ProdottoId = 14,
+                            Quantita = 1,
+                            RicevutaId = 14
+                        },
+                        new
+                        {
+                            Id = 28,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 30m,
+                            ProdottoId = 15,
+                            Quantita = 2,
+                            RicevutaId = 14
+                        },
+                        new
+                        {
+                            Id = 29,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 15m,
+                            ProdottoId = 15,
+                            Quantita = 1,
+                            RicevutaId = 15
+                        },
+                        new
+                        {
+                            Id = 30,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 32m,
+                            ProdottoId = 16,
+                            Quantita = 2,
+                            RicevutaId = 15
+                        },
+                        new
+                        {
+                            Id = 31,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 16m,
+                            ProdottoId = 16,
+                            Quantita = 1,
+                            RicevutaId = 16
+                        },
+                        new
+                        {
+                            Id = 32,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 34m,
+                            ProdottoId = 17,
+                            Quantita = 2,
+                            RicevutaId = 16
+                        },
+                        new
+                        {
+                            Id = 33,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 17m,
+                            ProdottoId = 17,
+                            Quantita = 1,
+                            RicevutaId = 17
+                        },
+                        new
+                        {
+                            Id = 34,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 36m,
+                            ProdottoId = 18,
+                            Quantita = 2,
+                            RicevutaId = 17
+                        },
+                        new
+                        {
+                            Id = 35,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 18m,
+                            ProdottoId = 18,
+                            Quantita = 1,
+                            RicevutaId = 18
+                        },
+                        new
+                        {
+                            Id = 36,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 38m,
+                            ProdottoId = 19,
+                            Quantita = 2,
+                            RicevutaId = 18
+                        },
+                        new
+                        {
+                            Id = 37,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 19m,
+                            ProdottoId = 19,
+                            Quantita = 1,
+                            RicevutaId = 19
+                        },
+                        new
+                        {
+                            Id = 38,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 40m,
+                            ProdottoId = 20,
+                            Quantita = 2,
+                            RicevutaId = 19
+                        },
+                        new
+                        {
+                            Id = 39,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 20m,
+                            ProdottoId = 20,
+                            Quantita = 1,
+                            RicevutaId = 20
+                        },
+                        new
+                        {
+                            Id = 40,
+                            CreatedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            IsDeleted = false,
+                            ModifiedAt = new DateTime(2024, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            PrezzoTotale = 2m,
+                            ProdottoId = 1,
+                            Quantita = 2,
+                            RicevutaId = 20
                         });
                 });
 
@@ -1291,6 +2060,25 @@ namespace store.api.Migrations
                         });
                 });
 
+            modelBuilder.Entity("store.core.src.Domain.Entity.Catalog.ReceiptDetail", b =>
+                {
+                    b.HasOne("store.core.src.Domain.Entity.Catalog.Product", "Prodotto")
+                        .WithMany()
+                        .HasForeignKey("ProdottoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("store.core.src.Domain.Entity.Catalog.Receipt", "Ricevuta")
+                        .WithMany("RicevutaDettagli")
+                        .HasForeignKey("RicevutaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Prodotto");
+
+                    b.Navigation("Ricevuta");
+                });
+
             modelBuilder.Entity("store.core.src.Domain.Entity.User.Client", b =>
                 {
                     b.HasOne("store.core.src.Domain.Entity.User.Person", "Person")
@@ -1311,6 +2099,11 @@ namespace store.api.Migrations
                         .IsRequired();
 
                     b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("store.core.src.Domain.Entity.Catalog.Receipt", b =>
+                {
+                    b.Navigation("RicevutaDettagli");
                 });
 #pragma warning restore 612, 618
         }
