@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using store.api._.Data;
 using AutoMapper;
-using store.core._.Domain.Interface;
-using store.core._.Domain.Strategy.Payment;
-using store.api._.Infrastructure.Service;
-using store.api._.Infrastructure.Repo;
+using store.api.src.Data;
+using store.core.src.Interface;
+using store.core.src.Strategy.Payment;
+using store.api.src.Infrastructure.Service;
+using store.api.src.Infrastructure.Repo;
 
 namespace store.api;
 
