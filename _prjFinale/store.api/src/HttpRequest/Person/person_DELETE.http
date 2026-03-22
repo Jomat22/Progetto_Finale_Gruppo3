@@ -4,7 +4,7 @@
 DELETE {{baseUrl}}/RSSMRA80A01H501U
 
 ### Test (Inesistente)
-DELETE {{baseUrl}}/UTENTEINESISTE..
+DELETE {{baseUrl}}/NON-ESISTO......
 
-### Test (Errato)
+### Test (dati non conformi)
 DELETE {{baseUrl}}/ERRORE

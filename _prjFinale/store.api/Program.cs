@@ -49,6 +49,8 @@ public class Program {
 
         builder.Services.AddScoped<PersonService>();
         builder.Services.AddScoped<PersonRepository>();
+        builder.Services.AddScoped<EmployeeService>();
+        builder.Services.AddScoped<EmployeeRepository>();
         builder.Services.AddScoped<IPaymentContext, PaymentContext>();
         builder.Services.AddScoped<IPaymentStrategy, BitcoinPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();

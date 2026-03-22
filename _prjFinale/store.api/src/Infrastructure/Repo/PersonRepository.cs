@@ -7,7 +7,18 @@ public class PersonRepository(DataContext context)
 {
     private readonly DataContext _context = context;
 
-    public async Task<Person?> GetPersonByTaxCode_repo(string codiceFiscale, bool asNoTracking = false) 
+    public async Task<Person?> GetPersonById_repo(int id, bool asNoTracking = true) 
+    {
+        try
+        {
+            IQueryable<Person> query = _context.People.AsQueryable();
+            if (asNoTracking) { query.AsNoTracking(); }
+
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
+        } catch (Exception) { throw; }
+    }
+
+    public async Task<Person?> GetPersonByTaxCode_repo(string codiceFiscale, bool asNoTracking = true) 
     {
         try
         {

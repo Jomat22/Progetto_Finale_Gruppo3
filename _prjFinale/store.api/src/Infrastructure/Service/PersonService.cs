@@ -52,7 +52,7 @@ public class PersonService(PersonRepository repo, IMapper mapper)
     public async Task<ApiResponseBase> PutPerson_serv(PersonUpdateRequest request) {
         try
         {
-            Person? existingPerson = await _repo.GetPersonByTaxCode_repo(request.CodiceFiscale);
+            Person? existingPerson = await _repo.GetPersonByTaxCode_repo(request.CodiceFiscale, false);
             if (existingPerson is null) { return ApiResponseFactory.NotFound(); }
 
             _mapper.Map(request, existingPerson);
@@ -69,7 +69,7 @@ public class PersonService(PersonRepository repo, IMapper mapper)
     public async Task<ApiResponseBase> DeletePerson_serv(string codiceFiscale) {
         try
         {
-            Person? existingPerson = await _repo.GetPersonByTaxCode_repo(codiceFiscale);
+            Person? existingPerson = await _repo.GetPersonByTaxCode_repo(codiceFiscale, false);
             if (existingPerson is null) { return ApiResponseFactory.NotFound(); }
 
             int numRows = await _repo.DeletePerson_repo(existingPerson);

@@ -1,0 +1,64 @@
+# ==============================================================================
+#   REGOLE PER I COMMENTI E IL PARSER (EVITA: "Expected end of data")
+# ==============================================================================
+
+# 1. USO DEL '#' PER I COMMENTI: 
+#    - PUOI usare '#' per descrivere i test, ma deve essere SEMPRE fuori dal JSON.
+#    - Se scrivi '#' subito dopo la chiusura '}', il parser lo leggerà come ERRORE.
+#    - Esempio Errore: } # commento (SBAGLIATO: il parser cerca il JSON qui)
+
+# 2. IL SEPARATORE '###':
+#    - È NECESSARIO per far apparire la scritta "Send Request".
+#    - È l'unico modo per "isolare" i commenti '#' tra un test e l'altro.
+#    - Funge da "muro": tutto ciò che c'è dopo '###' non disturba il JSON sopra.
+
+# 3. LO SPAZIO "RESPIRO" (FONDAMENTALE):
+#    - Lascia SEMPRE una riga vuota tra 'Content-Type: application/json' e '{'.
+#    - Se non la metti, il Body risulterà NULL (The request field is required).
+
+# 4. STRUTTURA PERFETTA:
+#    ### [Nome Test]
+#    # [Commento con #]
+#    POST {{baseUrl}}
+#    Content-Type: application/json
+#    (riga vuota qui)
+#    { "id": 1 }
+#    (riga vuota qui)
+#    ### (chiusura blocco)
+
+# ==============================================================================
+#   ESEMPIO PRATICO:
+# ==============================================================================
+
+### TEST 1 - CREAZIONE
+# Qui il '#' è sicuro perché siamo prima della richiesta
+POST {{baseUrl}}/api/Employee
+Content-Type: application/json
+
+{
+  "personId": 1,
+  "salario": 2000
+}
+
+### <--- Questo isola tutto. Senza questo, il '#' sotto causerebbe errore.
+
+# Ora posso usare di nuovo '#' per commentare il test successivo
+### TEST 2 - ERRORE
+POST {{baseUrl}}/api/Employee
+Content-Type: application/json
+
+{
+  "personId": 0
+}
+
+1. Lo Spazio Vuoto: È fondamentale che ci sia una riga vuota tra gli header (come Content-Type) 
+e il corpo del JSON. Se non la metti, il server non leggerà il corpo della richiesta.
+
+2. Non usare '//' ne tantomeno '#' affianco alle proprietà per commentare (errore parsing). 
+
+3. Naming Convention: Anche se in C# le proprietà iniziano con la maiuscola (Nome), 
+per impostazione predefinita l'API si aspetta il formato camelCase (nome).
+
+4. Formato Data: La DateOnly (o DateTime) va scritta tra virgolette nel formato standard ISO: "YYYY-MM-DD".
+
+Quindi, per cortesia, prestare attenzione durante i test al fine di procedere più velocemente nello sviluppo del progetto.

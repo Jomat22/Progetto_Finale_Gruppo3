@@ -4,11 +4,11 @@ namespace store.api.src.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PaymentController : ControllerBase
+public class _PaymentController : ControllerBase
 {
     private readonly IPaymentContext _paymentContext;
 
-    public PaymentController(IPaymentContext paymentContext)
+    public _PaymentController(IPaymentContext paymentContext)
     {
         _paymentContext = paymentContext;
     }

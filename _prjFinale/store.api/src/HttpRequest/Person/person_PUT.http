@@ -37,6 +37,9 @@ Content-Type: application/json
 }
 
 ### Test => Errore di Validazione (Esempio CF corto e Sesso errato)
+# Questo test fallirà per: 
+# - Codice Fiscale troppo corto (min/max 16)
+# - Sesso (min 1 => M/F)
 PUT {{baseUrl}}
 Content-Type: application/json
 
@@ -54,11 +57,4 @@ Content-Type: application/json
     "email": "email-non-valida"
 }
 
-
-1. Lo Spazio Vuoto: È fondamentale che ci sia una riga vuota tra gli header (come Content-Type) 
-e il corpo del JSON. Se non la metti, il server non leggerà il corpo della richiesta.
-
-2. Naming Convention: Anche se in C# le proprietà iniziano con la maiuscola (Nome), 
-per impostazione predefinita l'API si aspetta il formato camelCase (nome).
-
-3. Formato Data: La DateOnly (o DateTime) va scritta tra virgolette nel formato standard ISO: "YYYY-MM-DD".
+# Codice Fiscale usato per la ricerca nel db

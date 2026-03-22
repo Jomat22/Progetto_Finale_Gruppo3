@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using store.api.src.Common;
 using store.api.src.Factory;
 using store.api.src.Infrastructure.Service;
-using store.api.src.Dto.Person;
+using store.api.src.Dto.Employee;
 using store.core.src.Domain.Entity.User;
 namespace store.api.src.Controller;
 
@@ -17,19 +17,19 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("{codiceFiscale}")]
-    public async Task<IActionResult> GetClass_cont([FromRoute] string codiceFiscale)
+    [HttpGet("{codiceMeccanografico}")]
+    public async Task<IActionResult> GetClass_cont([FromRoute] string codiceMeccanografico)
     {
         try
         {
-            PersonGetByRequest request = new() { CodiceFiscale = codiceFiscale };
-            if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
+            EmployeeGetByRequest request = new() { CodiceMeccanografico = codiceMeccanografico };
+            if(codiceMeccanografico == "{codiceMeccanografico}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
 
-            ApiResponseBase response = await _serv.GetPerson_serv(request.CodiceFiscale);
+            ApiResponseBase response = await _serv.GetEmployee_serv(request.CodiceMeccanografico);
 
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Employee> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -41,15 +41,15 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllPerson_cont()
+    public async Task<IActionResult> GetAllEmployee_cont()
     {
         try 
         {
-            ApiResponseBase response = await _serv.GetAllPerson_serv();
+            ApiResponseBase response = await _serv.GetAllEmployee_serv();
 
             return response switch
             {
-                ApiResponse_Success<IEnumerable<Person>> success => Ok(success),
+                ApiResponse_Success<IEnumerable<Employee>> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -61,16 +61,16 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> PostPerson_cont([FromBody] PersonCreateRequest request)
+    public async Task<IActionResult> PostEmployee_cont([FromBody] EmployeeCreateRequest request)
     {
         try 
         {
             if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
-            ApiResponseBase response = await _serv.PostPerson_serv(request);
+            ApiResponseBase response = await _serv.PostEmployee_serv(request);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Employee> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -83,16 +83,16 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut]
-    public async Task<IActionResult> PutPerson_cont([FromBody] PersonUpdateRequest request)
+    public async Task<IActionResult> PutEmployee_cont([FromBody] EmployeeUpdateRequest request)
     {
         try 
         {
             if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
-            ApiResponseBase response = await _serv.PutPerson_serv(request);
+            ApiResponseBase response = await _serv.PutEmployee_serv(request);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Employee> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -104,19 +104,19 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpDelete("{codiceFiscale}")]
-    public async Task<IActionResult> DeletePerson_cont([FromRoute] string codiceFiscale)
+    [HttpDelete("{codiceMeccanografico}")]
+    public async Task<IActionResult> DeleteEmployee_cont([FromRoute] string codiceMeccanografico)
     {
         try
         {
-            PersonDeleteRequest request = new() { CodiceFiscale = codiceFiscale };
-            if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
+            EmployeeDeleteRequest request = new() { CodiceMeccanografico = codiceMeccanografico };
+            if(codiceMeccanografico == "{codiceMeccanografico}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
 
-            ApiResponseBase response = await _serv.DeletePerson_serv(request.CodiceFiscale);
+            ApiResponseBase response = await _serv.DeleteEmployee_serv(request.CodiceMeccanografico);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Employee> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };

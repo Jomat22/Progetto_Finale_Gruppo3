@@ -1,0 +1,63 @@
+@baseUrl = http://localhost:5102/api/Employee
+
+### 1. Test => Update Dipendente (Successo)
+# Nota: "0000000001" deve esistere nel tuo Seed (corrisponde all'ID 1)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 21,
+  "codiceMeccanografico": "0000000001",
+  "emailAziendale": "nuova.email@aziendale.it",
+  "password": "NuovaPassword123!",
+  "ruolo": "Senior Admin",
+  "salario": 3200.00
+}
+
+### 2. Test => Errore 404 (Codice Meccanografico inesistente)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 1,
+  "codiceMeccanografico": "NON-ESISTO",
+  "emailAziendale": "test@test.it",
+  "password": "Password123!",
+  "ruolo": "User",
+  "salario": 1500.00
+}
+
+### 3. Test => Errore 409 (Conflitto PersonId o Email già in uso)
+# Prova a mettere un PersonId che appartiene già a un ALTRO dipendente (es. 2)
+# O una Email Aziendale già assegnata a un altro collega.
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 1, 
+  "codiceMeccanografico": "MARIOROSSI",
+  "emailAziendale": "email2@gmail.com",
+  "password": "Password123!",
+  "ruolo": "Admin",
+  "salario": 2000.00
+}
+
+### 4. Test => Errore di Validazione (dati non conformi)
+# Questo test fallirà per: 
+# - Codice Meccanografico troppo lungo (max 10)
+# - Email formato non valido
+# - Password troppo corta (min 8)
+# - Salario negativo
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 1,
+  "codiceMeccanografico": "CODICE_LUNGO_OLTRE_10",
+  "emailAziendale": "email-invalida",
+  "password": "short",
+  "ruolo": "Admin",
+  "salario": -50.00
+}
+
+# Codice Meccanografico usato per la ricerca nel db

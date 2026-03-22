@@ -1,10 +1,10 @@
-@baseUrl = http://localhost:5102/api/Person
+@baseUrl = http://localhost:5102/api/Employee
 
 ### Test (Esistente)
-GET {{baseUrl}}/RSSMRA80A01H501U
+GET {{baseUrl}}/MARIOROSSI
 
 ### Test (Inesistente)
-GET {{baseUrl}}/NON-ESISTO......
+GET {{baseUrl}}/NON-ESISTO
 
 ### Test (dati non conformi)
 GET {{baseUrl}}/ERRORE
