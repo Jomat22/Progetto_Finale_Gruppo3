@@ -3,8 +3,7 @@ namespace store.api.src.Dto.Person;
 
 public class PersonUpdateRequest
 {
-    // Commentato perché specifico dell'admin non ancora implementato
-    /* [Required(ErrorMessage = "Il Codice Fiscale è obbligatorio.")]
+    [Required(ErrorMessage = "Il Codice Fiscale è obbligatorio.")]
     [StringLength(16, MinimumLength = 16, ErrorMessage = "Il Codice Fiscale deve essere di 16 caratteri.")]
     public string CodiceFiscale { get; set; } = default!;
 
@@ -21,7 +20,7 @@ public class PersonUpdateRequest
     public string Sesso { get; set; } = default!;
 
     [Required(ErrorMessage = "La Data di Nascita è obbligatoria.")]
-    public DateOnly DataNascita { get; set; } */
+    public DateOnly DataNascita { get; set; }
 
     [Required(ErrorMessage = "La Città è obbligatoria.")]
     [StringLength(100, ErrorMessage = "La Città non può superare i 100 caratteri.")]

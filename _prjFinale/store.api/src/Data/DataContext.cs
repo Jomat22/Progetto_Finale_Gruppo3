@@ -16,7 +16,6 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.ToTable("persone");
             entity.HasKey(pk => pk.Id);
             entity.HasIndex(e => e.CodiceFiscale).IsUnique();
-            entity.HasIndex(e => e.Email).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.CodiceFiscale).HasColumnOrder(2).HasColumnName("codice_fiscale").HasColumnType("varchar(16)");
@@ -58,6 +57,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.HasKey(pk => pk.Id);
             entity.HasOne(np => np.Person).WithOne().HasForeignKey<Employee>(fk => fk.PersonId).OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => e.CodiceMeccanografico).IsUnique();
+            entity.HasIndex(e => e.EmailAziendale).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();;
