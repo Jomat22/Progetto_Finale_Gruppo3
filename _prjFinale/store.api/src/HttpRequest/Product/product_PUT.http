@@ -1,0 +1,40 @@
+@baseUrl = http://localhost:5102/api/Product
+
+### 1. Test => Update Prodotto (successo)
+# Nota: Lo SKU deve esistere nel database per essere aggiornato
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "sku": "SKU-99999",
+  "nome": "Smartphone XYZ Pro",
+  "prezzo": 649.99,
+  "quantita": 45
+}
+
+### 2. Test => Prodotto inesistente (404 Not Found)
+# Test con uno SKU che non è presente nel database
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "sku": "SKU-INESISTENTE",
+  "nome": "Prodotto Fantasma",
+  "prezzo": 10.00,
+  "quantita": 1
+}
+
+### 3. Test => Errore di Validazione (dati non conformi)
+# Questo test fallirà per: 
+# - SKU troppo lungo (> 20 caratteri)
+# - Nome nullo o vuoto
+# - Prezzo zero o negativo (se validato nel controller/model)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "sku": "ECCESSO_DI_CARATTERI_OLTRE_IL_LIMITE",
+  "nome": "",
+  "prezzo": -50.00,
+  "quantita": 10
+}

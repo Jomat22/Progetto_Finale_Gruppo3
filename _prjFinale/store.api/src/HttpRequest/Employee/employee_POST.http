@@ -1,7 +1,8 @@
 @baseUrl = http://localhost:5102/api/Employee
 
 ### 1. Test => Creazione Dipendente (successo)
-# Nota: Assicurati che 'PersonId' esista nel DB e non sia già associato a un dipendente
+# Nota 1: Assicurarsi che 'PersonId' corrisponda ad un record esistente nella tabella 'persone' e non sia già associato ad un dipendente
+# Nota 2: Il 'CodiceMeccanografico' deve essere univoco nella tabella 'dipendenti'
 POST {{baseUrl}}
 Content-Type: application/json
 

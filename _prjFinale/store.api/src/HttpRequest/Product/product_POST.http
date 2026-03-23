@@ -1,0 +1,29 @@
+@baseUrl = http://localhost:5102/api/Product
+
+### 1. Test => Creazione Prodotto (successo)
+# Nota: Lo SKU deve essere univoco nella tabella prodotto
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "sku": "SKU-99999",
+  "nome": "Smartphone XYZ",
+  "prezzo": 599.99,
+  "quantita": 50
+}
+
+### 2. Test => Errore di Validazione (dati non conformi)
+# Questo test fallirà per: 
+# - SKU troppo lungo (max 20 caratteri nel DataContext)
+# - Nome troppo lungo (max 100 caratteri nel DataContext)
+# - Prezzo negativo (logica di business comune)
+# - Quantità negativa
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "sku": "ECCESSO_DI_CARATTERI_OLTRE_IL_LIMITE",
+  "nome": "Questo nome è decisamente troppo lungo per superare la validazione dei cento caratteri impostata nella configurazione fluent api del database",
+  "prezzo": -10.50,
+  "quantita": -5
+}
