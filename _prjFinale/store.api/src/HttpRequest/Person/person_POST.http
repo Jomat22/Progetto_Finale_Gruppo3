@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5102/api/Person
 
-### Test => Creazione Persona (Successo)
+### Test => Creazione Persona (successo)
 POST {{baseUrl}}
 Content-Type: application/json
 

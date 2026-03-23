@@ -40,10 +40,9 @@ public class EmployeeService(EmployeeRepository repo, PersonRepository repoPerso
             Person? existingPerson = await _repoPerson.GetPersonById_repo(request.PersonId);
             if (existingPerson is null) { return ApiResponseFactory.NotFound(); }
 
-            // Disabilito perché voglio permettere una persona di essere sia un cliente che un dipendente 
-            /* // Id della persona già associato ad un cliente? Se si, interrompo con un '409' (conflitto)
-            Client? existingPersonInEmployee = await _repoClient.GetClientByPersonId_repo(request.PersonId);
-            if (existingPersonInEmployee is not null) { return ApiResponseFactory.Conflict(); } */
+            // Id della persona già associato ad un dipendente? Se si, interrompo con un '409' (conflitto)
+            Employee? existingPersonInEmployee = await _repo.GetEmployeeByPersonId_repo(request.PersonId);
+            if (existingPersonInEmployee is not null) { return ApiResponseFactory.Conflict(); }
             
             // Codice meccanografico già associato ad un dipendente? Se si, interrompo con un '409' (conflitto)
             Employee? existingEmployee = await _repo.GetEmployeeByMCode_repo(request.CodiceMeccanografico);

@@ -1,10 +1,10 @@
 @baseUrl = http://localhost:5102/api/Employee
 
-### Test (Esistente)
+### Test (esistente)
 DELETE {{baseUrl}}/MARIOROSSI
 
-### Test (Inesistente)
+### Test (inesistente)
 DELETE {{baseUrl}}/NON-ESISTO
 
-### Test (dati non conformi)
+### Test (dati non conformi / errore validazione)
 DELETE {{baseUrl}}/ERRORE

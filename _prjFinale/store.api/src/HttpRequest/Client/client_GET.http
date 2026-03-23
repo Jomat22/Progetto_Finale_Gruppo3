@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5102/api/Client
+
+### Test (esistente)
+GET {{baseUrl}}/CC-MARIOROSSI-2024..
+
+### Test (inesistente)
+GET {{baseUrl}}/NON-ESISTO
+
+### Test (dati non conformi)
+GET {{baseUrl}}/STRINGALUNGAPIUDI20CARATTERI
+
+### Test => Lista
+GET {{baseUrl}}

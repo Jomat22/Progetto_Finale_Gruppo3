@@ -3,9 +3,8 @@ namespace store.api.src.Dto.Client;
 
 public class ClientUpdateRequest
 {
-    // Attualmente 'PersonId' non è modificabile
-    /* [Required(ErrorMessage = "L'ID della persona associata è obbligatorio.")]
-    public int PersonId { get; set; } */
+    [Required(ErrorMessage = "L'ID della persona associata è obbligatorio.")]
+    public int PersonId { get; set; }
 
     // 'CodiceCliente' usato ai fini di verifica esistenza
     [Required(ErrorMessage = "Il Codice Cliente è obbligatorio.")]

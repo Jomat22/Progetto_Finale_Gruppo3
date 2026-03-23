@@ -1,0 +1,38 @@
+@baseUrl = http://localhost:5102/api/Client
+
+### 1. Test => Creazione Cliente (successo)
+# Nota: Assicurati che 'PersonId' esista e non sia già un 'Cliente'
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 31,
+  "codiceCliente": "CC-MARIOROSSI-2024..",
+  "isFidelizzato": true,
+  "isIscrittoNewsletter": true
+}
+
+### 2. Test => Errore di Validazione (dati non conformi)
+# Fallisce per:
+# - codiceCliente troppo lungo (il tuo DB ha varchar(20))
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 31,
+  "codiceCliente": "CC-MARIOROSSI-2024...",
+  "isFidelizzato": true,
+  "isIscrittoNewsletter": true
+}
+
+### 3. Test => Errore Duplicato ('Codice Cliente' già esistente)
+# Fallisce perché 'codiceCliente' è Unique nel 'DataContext'
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 31,
+  "codiceCliente": "CC-MARIOROSSI-2024",
+  "isFidelizzato": false,
+  "isIscrittoNewsletter": false
+}

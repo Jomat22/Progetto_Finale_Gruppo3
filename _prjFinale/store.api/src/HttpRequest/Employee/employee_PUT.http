@@ -1,20 +1,20 @@
 @baseUrl = http://localhost:5102/api/Employee
 
-### 1. Test => Update Dipendente (Successo)
-# Nota: "0000000001" deve esistere nel tuo Seed (corrisponde all'ID 1)
+### 1. Test => Update Dipendente (successo)
+# Nota: "0000000001" deve esistere nel 'Seed' (corrisponde all'ID 1)
 PUT {{baseUrl}}
 Content-Type: application/json
 
 {
-  "personId": 21,
-  "codiceMeccanografico": "0000000001",
+  "personId": 31,
+  "codiceMeccanografico": "CM-MARIO..",
   "emailAziendale": "nuova.email@aziendale.it",
   "password": "NuovaPassword123!",
   "ruolo": "Senior Admin",
   "salario": 3200.00
 }
 
-### 2. Test => Errore 404 (Codice Meccanografico inesistente)
+### 2. Test => Errore 404 (codice mccanografico inesistente)
 PUT {{baseUrl}}
 Content-Type: application/json
 
@@ -27,7 +27,7 @@ Content-Type: application/json
   "salario": 1500.00
 }
 
-### 3. Test => Errore 409 (Conflitto PersonId o Email già in uso)
+### 3. Test => Errore 409 (Conflitto 'PersonId' o 'Email' già in uso)
 # Prova a mettere un PersonId che appartiene già a un ALTRO dipendente (es. 2)
 # O una Email Aziendale già assegnata a un altro collega.
 PUT {{baseUrl}}

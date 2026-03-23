@@ -1,13 +1,13 @@
 @baseUrl = http://localhost:5102/api/Employee
 
-### 1. Test => Creazione Dipendente (Successo)
-# Nota: Assicurati che PersonId 21 esista nel DB e non sia già associato a un dipendente
+### 1. Test => Creazione Dipendente (successo)
+# Nota: Assicurati che 'PersonId' esista nel DB e non sia già associato a un dipendente
 POST {{baseUrl}}
 Content-Type: application/json
 
 {
-  "personId": 22,
-  "codiceMeccanografico": "MARIOROSSI",
+  "personId": 31,
+  "codiceMeccanografico": "CM-MARIO..",
   "emailAziendale": "mario.rossi@gmail.com",
   "password": "PasswordSicura123!",
   "ruolo": "Manager",

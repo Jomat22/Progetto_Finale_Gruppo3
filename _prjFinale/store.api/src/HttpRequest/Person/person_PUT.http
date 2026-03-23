@@ -1,6 +1,6 @@
 @baseUrl = http://localhost:5102/api/Person
 
-### Test => Update Persona (Successo)
+### Test => Update Persona (successo)
 PUT {{baseUrl}}
 Content-Type: application/json
 

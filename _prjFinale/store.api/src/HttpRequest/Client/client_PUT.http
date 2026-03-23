@@ -1,0 +1,52 @@
+@baseUrl = http://localhost:5102/api/Client
+
+### 1. Test => Update Cliente (Successo)
+# Nota: "CC-MARIOROSSI-2024.." deve esistere nel 'Seed'
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 31,
+  "codiceCliente": "CC-MARIOROSSI-2024..",
+  "isFidelizzato": true,
+  "isIscrittoNewsletter": false
+}
+
+### 2. Test => Errore 404 (Codice Cliente inesistente)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 11,
+  "codiceCliente": "NON-ESISTO",
+  "isFidelizzato": false,
+  "isIscrittoNewsletter": false
+}
+
+### 3. Test => Errore 409 (Conflitto PersonId o Codice già in uso)
+# Prova a cambiare un cliente esistente assegnandogli una PersonId 
+# che appartiene già a un altro record Cliente (es. ID 12)
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 12, 
+  "codiceCliente": "00000000000000000001",
+  "isFidelizzato": true,
+  "isIscrittoNewsletter": true
+}
+
+### 4. Test => Errore di Validazione (Dati non conformi)
+# Fallisce per:
+# - Codice Cliente troppo lungo (max 20 nel tuo DB)
+# - PersonId non valida (0)
+# - Formato booleano errato 
+PUT {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 0,
+  "codiceCliente": "CODICE_OLTRE_VENTI_CARATTERI",
+  "isFidelizzato": true,
+  "isIscrittoNewsletter": true
+}

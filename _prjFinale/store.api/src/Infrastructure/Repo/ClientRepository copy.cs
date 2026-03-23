@@ -8,7 +8,7 @@ public class ClientRepository(DataContext context)
     private readonly DataContext _context = context;
 
     // Per verificare se id delle persona è già in utilizzo
-    public async Task<Client?> GetClientByPersonId_repo(int personId, bool asNoTracking = false) 
+    public async Task<Client?> GetClientByPersonId_repo(int personId, bool asNoTracking = true) 
     {
         try
         {
@@ -19,7 +19,7 @@ public class ClientRepository(DataContext context)
         } catch (Exception) { throw; }
     }
 
-    public async Task<Client?> GetClientByCCode_repo(string codiceCliente, bool asNoTracking = false) 
+    public async Task<Client?> GetClientByCCode_repo(string codiceCliente, bool asNoTracking = true) 
     {
         try
         {

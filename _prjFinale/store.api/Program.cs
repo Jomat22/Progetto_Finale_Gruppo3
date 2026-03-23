@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using AutoMapper;
 using store.api.src.Data;
 using store.core.src.Interface;
 using store.core.src.Strategy.Payment;
@@ -51,6 +50,8 @@ public class Program {
         builder.Services.AddScoped<PersonRepository>();
         builder.Services.AddScoped<EmployeeService>();
         builder.Services.AddScoped<EmployeeRepository>();
+        builder.Services.AddScoped<ClientService>();
+        builder.Services.AddScoped<ClientRepository>();
         builder.Services.AddScoped<IPaymentContext, PaymentContext>();
         builder.Services.AddScoped<IPaymentStrategy, BitcoinPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();
