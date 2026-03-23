@@ -20,4 +20,5 @@ public class Product : BaseEntity, IProduct
     }
 
     public string Descrizione() => Nome;
+    public decimal GetPrezzo() => Prezzo;
 }
