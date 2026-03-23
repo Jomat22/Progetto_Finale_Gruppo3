@@ -82,12 +82,4 @@ public class _PaymentController : ControllerBase
 
     return nuovoScontrino;
 }
-Riepilogo dei vantaggi:
-Sicurezza Prezzi: Il prezzo viene preso dal DB, quindi il cliente non può "imbrogliare" inviando un prezzo più basso dal frontend.
-
-Magazzino Real-time: Le quantità scalano nel momento esatto della vendita.
-
-Transazionalità: Se il database crasha mentre salva il terzo prodotto, non verrà salvato nulla (nemmeno lo scontrino), evitando dati incompleti.
-
-Vuoi che ti aiuti a scrivere anche il DTO di risposta per mostrare lo scontrino appena creato all'utente?
  */
