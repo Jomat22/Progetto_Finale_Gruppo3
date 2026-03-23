@@ -62,10 +62,10 @@ public class _PaymentController : ControllerBase
         // 4. Aggiorniamo i parziali
         calcoloTotaleScontrino += riga.PrezzoTotale;
         
-        // 5. AGGIORNIAMO IL MAGAZZINO
+        // 5. Aggiorniamo
         prodottoDb.Qnt -= item.Quantita;
 
-        // 6. AGGIUNGIAMO ALLA LISTA (Qui scatta il legame automatico)
+        // 6. Aggiungo alla lista (Qui scatta il legame automatico)
         nuovoScontrino.Dettagli.Add(riga);
     }
 
@@ -74,7 +74,7 @@ public class _PaymentController : ControllerBase
     // Salvataggio finale
     _context.Receipts.Add(nuovoScontrino);
     await _context.SaveChangesAsync(); 
-    // ^ Qui EF Core: 
+    // Qui EF Core: 
     // 1. Inserisce Receipt 
     // 2. Legge l'ID generato 
     // 3. Lo mette in tutti i ReceiptDetail 
