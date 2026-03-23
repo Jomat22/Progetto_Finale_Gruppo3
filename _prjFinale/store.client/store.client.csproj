@@ -12,8 +12,4 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="10.0.5" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\store.api\store.api.csproj" />
-  </ItemGroup>
-
 </Project>
