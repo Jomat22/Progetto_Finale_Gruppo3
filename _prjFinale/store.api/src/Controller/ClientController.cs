@@ -59,6 +59,7 @@ public class ClientController(ClientService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<IActionResult> PostClient_cont([FromBody] ClientCreateRequest request)
@@ -81,6 +82,7 @@ public class ClientController(ClientService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut]
     public async Task<IActionResult> PutClient_cont([FromBody] ClientUpdateRequest request)

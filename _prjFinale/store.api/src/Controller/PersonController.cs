@@ -59,6 +59,7 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
     public async Task<IActionResult> PostPerson_cont([FromBody] PersonCreateRequest request)
