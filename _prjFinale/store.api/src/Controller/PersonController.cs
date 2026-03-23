@@ -18,7 +18,7 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("{codiceFiscale}")]
-    public async Task<IActionResult> GetClass_cont([FromRoute] string codiceFiscale)
+    public async Task<IActionResult> GetPerson_cont([FromRoute] string codiceFiscale)
     {
         try
         {
