@@ -1,0 +1,33 @@
+@baseUrl = http://localhost:5102/api/Employee
+
+### 1. Test => Creazione Dipendente (successo)
+# Nota: Assicurati che 'PersonId' esista nel DB e non sia già associato a un dipendente
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 31,
+  "codiceMeccanografico": "CM-MARIO..",
+  "emailAziendale": "mario.rossi@gmail.com",
+  "password": "PasswordSicura123!",
+  "ruolo": "Manager",
+  "salario": 2500.50
+}
+
+### 2. Test => Errore di Validazione (dati non conformi)
+# Questo test fallirà per: 
+# - Codice Meccanografico troppo lungo (max 10)
+# - Email formato non valido
+# - Password troppo corta (min 8)
+# - Salario negativo
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "personId": 0,
+  "codiceMeccanografico": "CODICE_TROPPO_LUNGO_12345",
+  "emailAziendale": "email-aziendale-errata",
+  "password": "short",
+  "ruolo": "Admin",
+  "salario": -150.00
+}

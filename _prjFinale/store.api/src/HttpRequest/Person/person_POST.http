@@ -1,0 +1,42 @@
+@baseUrl = http://localhost:5102/api/Person
+
+### Test => Creazione Persona (successo)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codiceFiscale": "RSSMRA80A01H501U",
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "sesso": "M",
+  "dataNascita": "1980-01-01",
+  "citta": "Roma",
+  "provincia": "RM",
+  "codicePostale": "00100",
+  "indirizzo": "Via Roma 1",
+  "numeroContatto": "+393331234567",
+  "email": "mario.rossi@example.com"
+}
+
+### Test => Errore di Validazione (dati non conformi)
+# Questo test fallirà per: 
+# - Codice Fiscale troppo corto (min/max 16)
+# - Sesso (min 1 => M/F)
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+  "codiceFiscale": "CORTO",  
+  "nome": "Mario",
+  "cognome": "Rossi",
+  "sesso": "X",
+  "dataNascita": "1980-01-01",
+  "citta": "Roma",
+  "provincia": "RM",
+  "codicePostale": "00100",
+  "indirizzo": "Via Roma 1",
+  "numeroContatto": "333",
+  "email": "email-non-valida"
+}
+
+# Codice Fiscale usato per la ricerca nel db

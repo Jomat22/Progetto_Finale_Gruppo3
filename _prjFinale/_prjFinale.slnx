@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="system.api/system.api.csproj" />
-  <Project Path="system.client/system.client.csproj" />
-  <Project Path="system.core/system.core.csproj" />
+  <Project Path="store.api/store.api.csproj" />
+  <Project Path="store.client/store.client.csproj" />
+  <Project Path="store.core/store.core.csproj" />
 </Solution>

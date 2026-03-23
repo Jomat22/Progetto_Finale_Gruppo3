@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5102/api/Employee
+
+### Test (esistente)
+GET {{baseUrl}}/MARIOROSSI
+
+### Test (inesistente)
+GET {{baseUrl}}/NON-ESISTO
+
+### Test (dati non conformi / errore validazione)
+GET {{baseUrl}}/ERRORE
+
+### Test => Lista
+GET {{baseUrl}}
