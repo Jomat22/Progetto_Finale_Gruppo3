@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:5102/api/Product
+
+### Test (esistente)
+GET {{baseUrl}}/SKU-99999
+
+### Test (inesistente)
+GET {{baseUrl}}/SKU-INESISTENTE
+
+### Test (dati non conformi / errore validazione)
+GET {{baseUrl}}/ECCESSO_DI_CARATTERI_OLTRE_IL_LIMITE
+
+### Test => Lista
+GET {{baseUrl}}

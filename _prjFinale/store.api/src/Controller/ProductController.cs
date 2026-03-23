@@ -2,34 +2,34 @@ using Microsoft.AspNetCore.Mvc;
 using store.api.src.Common;
 using store.api.src.Factory;
 using store.api.src.Infrastructure.Service;
-using store.api.src.Dto.Person;
-using store.core.src.Domain.Entity.User;
+using store.api.src.Dto.Product;
+using store.core.src.Domain.Entity.Catalog;
 namespace store.api.src.Controller;
 
 [ApiController]
 [Route("api/[Controller]")]
-public class PersonController(PersonService serv) : ControllerBase
+public class ProductController(ProductService serv) : ControllerBase
 {
-    private readonly PersonService _serv = serv;
+    private readonly ProductService _serv = serv;
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("{codiceFiscale}")]
-    public async Task<IActionResult> GetPerson_cont([FromRoute] string codiceFiscale)
+    [HttpGet("{sku}")]
+    public async Task<IActionResult> GetProduct_cont([FromRoute] string sku)
     {
         try
         {
-            PersonGetByRequest request = new() { CodiceFiscale = codiceFiscale };
-            if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
+            ProductGetByRequest request = new() { Sku = sku };
+            if(sku == "{sku}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
 
-            ApiResponseBase response = await _serv.GetPerson_serv(request.CodiceFiscale);
+            ApiResponseBase response = await _serv.GetProduct_serv(request.Sku);
 
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Product> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -41,15 +41,15 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<IActionResult> GetAllPerson_cont()
+    public async Task<IActionResult> GetAllProduct_cont()
     {
         try 
         {
-            ApiResponseBase response = await _serv.GetAllPerson_serv();
+            ApiResponseBase response = await _serv.GetAllProduct_serv();
 
             return response switch
             {
-                ApiResponse_Success<IEnumerable<Person>> success => Ok(success),
+                ApiResponse_Success<IEnumerable<Product>> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -62,16 +62,16 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPost]
-    public async Task<IActionResult> PostPerson_cont([FromBody] PersonCreateRequest request)
+    public async Task<IActionResult> PostProduct_cont([FromBody] ProductCreateRequest request)
     {
         try 
         {
             if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
-            ApiResponseBase response = await _serv.PostPerson_serv(request);
+            ApiResponseBase response = await _serv.PostProduct_serv(request);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Product> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -84,16 +84,16 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpPut]
-    public async Task<IActionResult> PutPerson_cont([FromBody] PersonUpdateRequest request)
+    public async Task<IActionResult> PutProduct_cont([FromBody] ProductUpdateRequest request)
     {
         try 
         {
             if (!ModelState.IsValid) return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState));
-            ApiResponseBase response = await _serv.PutPerson_serv(request);
+            ApiResponseBase response = await _serv.PutProduct_serv(request);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Product> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -105,19 +105,19 @@ public class PersonController(PersonService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpDelete("{codiceFiscale}")]
-    public async Task<IActionResult> DeletePerson_cont([FromRoute] string codiceFiscale)
+    [HttpDelete("{sku}")]
+    public async Task<IActionResult> DeleteProduct_cont([FromRoute] string sku)
     {
         try
         {
-            PersonDeleteRequest request = new() { CodiceFiscale = codiceFiscale };
-            if(codiceFiscale == "{codiceFiscale}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
+            ProductDeleteRequest request = new() { Sku = sku };
+            if(sku == "{sku}" || !TryValidateModel(request)) { return BadRequest(ApiResponseFactory.BadInput_ModelState(ModelState)); }
 
-            ApiResponseBase response = await _serv.DeletePerson_serv(request.CodiceFiscale);
+            ApiResponseBase response = await _serv.DeleteProduct_serv(request.Sku);
             
             return response switch
             {
-                ApiResponse_Success<Person> success => Ok(success),
+                ApiResponse_Success<Product> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
