@@ -18,7 +18,7 @@ public class ClientController(ClientService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("{codiceCliente}")]
-    public async Task<IActionResult> GetClass_cont([FromRoute] string codiceCliente)
+    public async Task<IActionResult> GetClient_cont([FromRoute] string codiceCliente)
     {
         try
         {

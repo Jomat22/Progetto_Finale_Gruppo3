@@ -18,7 +18,7 @@ public class EmployeeController(EmployeeService serv) : ControllerBase
     [ProducesResponseType(StatusCodes.Status405MethodNotAllowed)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("{codiceMeccanografico}")]
-    public async Task<IActionResult> GetClass_cont([FromRoute] string codiceMeccanografico)
+    public async Task<IActionResult> GetEmployee_cont([FromRoute] string codiceMeccanografico)
     {
         try
         {
