@@ -11,4 +11,5 @@ public interface IStoreFacade
     Task<ApiResponseBase> GetReceiptByMetodoFacade(string metodoPagamento);
     Task<ApiResponseBase> CreateReceiptFacade(ReceiptCreateRequest request);
     Task<ApiResponseBase> DeleteReceiptFacade(int id);
+    Task<ApiResponseBase> GetStoricoByClientFacade(int clientId);
 }

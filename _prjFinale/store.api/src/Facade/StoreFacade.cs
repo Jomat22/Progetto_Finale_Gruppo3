@@ -32,4 +32,9 @@ public class StoreFacade(ReceiptService service) : IStoreFacade
     {
         return await _service.DeleteReceipt_serv(id);
     }
+
+    public async Task<ApiResponseBase> GetStoricoByClientFacade(int clientId)
+    {
+        return await _service.GetStoricoByClient_serv(clientId);
+    }
 }
