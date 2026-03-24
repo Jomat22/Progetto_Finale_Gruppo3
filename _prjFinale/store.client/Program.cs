@@ -29,9 +29,13 @@ class Program
                     AddSale();
                     ContinueAndClear();
                     break;
+                case ConsoleKey.D4:
+                    flagMainLoop = false;
+                    Console.Clear();
+                    ContinueAndClear();
+                    break;
             }
         }
-
     }
 
     public static void AddEntity()

@@ -1,10 +1,10 @@
 using AutoMapper;
 using store.api.src.Common;
-using store.api.src.Factory;
-using store.api.src.Infrastructure.Repo;
 using store.api.src.Dto.Employee;
-using store.core.src.Domain.Entity.User;
+using store.api.src.Factory;
 using store.api.src.Helper;
+using store.api.src.Infrastructure.Repo;
+using store.core.src.Domain.Entity.User;
 namespace store.api.src.Infrastructure.Service;
 
 public class EmployeeService(EmployeeRepository repo, PersonRepository repoPerson, /* ClientRepository  _repoClient, */ IMapper mapper)

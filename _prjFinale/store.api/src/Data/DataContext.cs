@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using store.core.src.Domain.Entity.Catalog;
+using store.core.src.Domain.Entity.Sales;
 using store.core.src.Domain.Entity.User;
 namespace store.api.src.Data;
 
