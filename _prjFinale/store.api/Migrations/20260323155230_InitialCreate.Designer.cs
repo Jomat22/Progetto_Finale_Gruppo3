@@ -12,8 +12,8 @@ using store.api.src.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20260323114537_Init")]
-    partial class Init
+    [Migration("20260323155230_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

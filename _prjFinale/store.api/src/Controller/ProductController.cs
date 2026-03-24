@@ -4,7 +4,16 @@ using store.api.src.Factory;
 using store.api.src.Infrastructure.Service;
 using store.api.src.Dto.Product;
 using store.core.src.Domain.Entity.Catalog;
+using store.api.src.Decorator;
+using store.core.src.Interface;
 namespace store.api.src.Controller;
+
+public class ProductDecorateRequest
+{
+    public string Nome { get; set; } = string.Empty;
+    public decimal Prezzo { get; set; }
+    public List<string> Decoratori { get; set; } = [];
+}
 
 [ApiController]
 [Route("api/[Controller]")]
@@ -122,5 +131,26 @@ public class ProductController(ProductService serv) : ControllerBase
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
         } catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
+    }
+
+
+    [HttpPost("decorate")]
+    public IActionResult Decorate([FromBody] ProductDecorateRequest request)
+    {
+        IProduct prodotto = new Product { Nome = request.Nome, Prezzo = request.Prezzo };
+
+        foreach (var dec in request.Decoratori)
+        {
+            if (dec.ToLower() == "giftwrap")             prodotto = new GiftWrapDecorator(prodotto);
+            else if (dec.ToLower() == "expressdelivery") prodotto = new ExpressDeliveryDecorator(prodotto);
+            else if (dec.ToLower() == "insurance")       prodotto = new InsuranceDecorator(prodotto);
+            else return BadRequest($"Decorator '{dec}' non riconosciuto.");
+        }
+
+        return Ok(new
+        {
+            Descrizione = prodotto.Descrizione(),
+            Prezzo      = prodotto.GetPrezzo()
+        });
     }
 }

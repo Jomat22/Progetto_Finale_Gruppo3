@@ -1,4 +1,4 @@
-namespace store.client.src.Observer;
+namespace store.client.Observer;
 
 public class OrderPublisher : IOrderSubject
 {
