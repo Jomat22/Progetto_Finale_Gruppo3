@@ -5,6 +5,8 @@ using store.api.src.Dto.Product;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 using System.Text.Json;
+using store.client.Observer;
+using store.client.Singleton;
 
 namespace store.client;
 
@@ -12,6 +14,8 @@ class Program
 {
     const string BASE_URL = "http://localhost:5102/";
     static readonly HttpClient _http = new HttpClient { BaseAddress = new Uri(BASE_URL) };
+
+    static readonly OrderPublisher _orderPublisher = new();
 
     static readonly JsonSerializerOptions _jsonOpt = new JsonSerializerOptions
     {
@@ -23,6 +27,14 @@ class Program
     // =========================================================
     static void Main()
     {
+
+        AppLogger.Instance.LogInfo("Terminale Negozio avviato.");
+        
+
+        _orderPublisher.Subscribe(new LoggerObserver());
+        _orderPublisher.Subscribe(new MagazziniereObserver("Sistema Centrale"));
+        _orderPublisher.Subscribe(new PagamentiObserver());
+
         bool run = true;
         while (run)
         {
@@ -40,6 +52,7 @@ class Program
                 case '0': run = false; break;
             }
         }
+        AppLogger.Instance.LogInfo("Chiusura applicazione.");
         Console.WriteLine("\nArrivederci!");
     }
 
@@ -89,11 +102,11 @@ class Program
 
             switch (ReadKey("Seleziona: ", '0', '5'))
             {
-                case '1': AggiungiPersona();  Pausa(); break;
-                case '2': ModificaPersona();  Pausa(); break;
-                case '3': EliminaPersona();   Pausa(); break;
-                case '4': CercaPersona();     Pausa(); break;
-                case '5': ListaPersone();     Pausa(); break;
+                case '1': AggiungiPersona();   Pausa(); break;
+                case '2': ModificaPersona();   Pausa(); break;
+                case '3': EliminaPersona();    Pausa(); break;
+                case '4': CercaPersona();      Pausa(); break;
+                case '5': ListaPersone();      Pausa(); break;
                 case '0': run = false; break;
             }
         }
@@ -308,9 +321,7 @@ class Program
     {
         Console.Clear();
         PrintHeader("AGGIUNGI CLIENTE");
-        Console.WriteLine("N.B.: La persona deve essere gia presente in anagrafica.");
-        Console.WriteLine("N.B.: Un dipendente puo essere anche cliente (stesso PersonId).\n");
-
+        
         ClientCreateRequest req = new();
         req.PersonId             = LeggiIntero("ID Persona associata: ");
         req.CodiceCliente        = LeggiStringa("Codice Cliente (3-20 car.): ").ToUpper();
@@ -490,7 +501,6 @@ class Program
         StampaLista(result);
     }
 
-    // ---- VISUALIZZA ANAGRAFICHE (sola lettura per magazziniere) ----
     static void MenuVisualizzaAnagrafiche()
     {
         bool run = true;
@@ -529,7 +539,22 @@ class Program
         PrintHeader("STORICO ORDINI CLIENTE");
         string codiceCliente = LeggiStringa("Inserisci Codice Cliente: ").ToUpper();
         var result = GetAsync($"api/Order/history/{codiceCliente}").GetAwaiter().GetResult();
-        Console.WriteLine(result ?? "Nessun ordine trovato per questo cliente.");
+        
+        if (result != null)
+        {
+            Console.WriteLine(result);
+            var evento = new OrderCreatedEvent(
+                "Riepilogo Storico", 
+                0.00m, 
+                "In sola lettura", 
+                DateTime.Now
+            );
+            _orderPublisher.NotifyOrderCreated(evento);
+        }
+        else
+        {
+            AppLogger.Instance.LogWarning($"Nessun ordine trovato per {codiceCliente}.");
+        }
     }
 
     static void VisualizzaOrdiniDelGiorno()
@@ -537,76 +562,57 @@ class Program
         Console.Clear();
         PrintHeader("ORDINI DEL GIORNO E TOTALE");
         var result = GetAsync("api/Order/daily-report").GetAwaiter().GetResult();
-        Console.WriteLine(result ?? "Nessun ordine registrato oggi.");
+        
+        if (result != null)
+        {
+            Console.WriteLine(result);
+        }
+        else
+        {
+            AppLogger.Instance.LogWarning("Nessun ordine registrato oggi.");
+        }
     }
 
     // =========================================================
-    // HTTP HELPERS
+    // HTTP HELPERS 
     // =========================================================
     static async Task<bool> PostAsync<T>(string endpoint, T payload)
     {
         try
         {
-            Console.WriteLine("\nInvio in corso...");
             var response = await _http.PostAsJsonAsync(endpoint, payload);
-            if (!response.IsSuccessStatusCode)
-            {
-                string err = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Errore {(int)response.StatusCode}: {err}");
-                return false;
-            }
-            return true;
+            return response.IsSuccessStatusCode;
         }
-        catch (Exception ex) { Console.WriteLine($"Errore di connessione: {ex.Message}"); return false; }
+        catch (Exception ex) { AppLogger.Instance.LogError($"Errore POST: {ex.Message}"); return false; }
     }
 
     static async Task<bool> PutAsync<T>(string endpoint, T payload)
     {
         try
         {
-            Console.WriteLine("\nInvio in corso...");
             var response = await _http.PutAsJsonAsync(endpoint, payload);
-            if (!response.IsSuccessStatusCode)
-            {
-                string err = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Errore {(int)response.StatusCode}: {err}");
-                return false;
-            }
-            return true;
+            return response.IsSuccessStatusCode;
         }
-        catch (Exception ex) { Console.WriteLine($"Errore di connessione: {ex.Message}"); return false; }
+        catch (Exception ex) { AppLogger.Instance.LogError($"Errore PUT: {ex.Message}"); return false; }
     }
 
     static async Task<bool> DeleteAsync(string endpoint)
     {
         try
         {
-            Console.WriteLine("\nInvio in corso...");
             var response = await _http.DeleteAsync(endpoint);
-            if (!response.IsSuccessStatusCode)
-            {
-                string err = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Errore {(int)response.StatusCode}: {err}");
-                return false;
-            }
-            return true;
+            return response.IsSuccessStatusCode;
         }
-        catch (Exception ex) { Console.WriteLine($"Errore di connessione: {ex.Message}"); return false; }
+        catch (Exception ex) { AppLogger.Instance.LogError($"Errore DELETE: {ex.Message}"); return false; }
     }
 
     static async Task<string?> GetAsync(string endpoint)
     {
         try
         {
-            Console.WriteLine("\nCaricamento...");
             var response = await _http.GetAsync(endpoint);
             string body = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode)
-            {
-                Console.WriteLine($"Errore {(int)response.StatusCode}: {body}");
-                return null;
-            }
-            // Pretty-print JSON
+            if (!response.IsSuccessStatusCode) return null;
             try
             {
                 var doc = JsonDocument.Parse(body);
@@ -614,32 +620,23 @@ class Program
             }
             catch { return body; }
         }
-        catch (Exception ex) { Console.WriteLine($"Errore di connessione: {ex.Message}"); return null; }
+        catch (Exception ex) { AppLogger.Instance.LogError($"Errore GET: {ex.Message}"); return null; }
     }
 
     // =========================================================
-    // INPUT HELPERS
+    // INPUT & UI HELPERS
     // =========================================================
     static string LeggiStringa(string prompt)
     {
         string? val;
-        do
-        {
-            Console.Write(prompt);
-            val = Console.ReadLine()?.Trim();
-        } while (string.IsNullOrWhiteSpace(val));
+        do { Console.Write(prompt); val = Console.ReadLine()?.Trim(); } while (string.IsNullOrWhiteSpace(val));
         return val;
     }
 
     static string LeggiRegex(string prompt, string pattern)
     {
         string val;
-        do
-        {
-            val = LeggiStringa(prompt);
-            if (!System.Text.RegularExpressions.Regex.IsMatch(val, pattern))
-                Console.WriteLine("  Valore non valido, riprova.");
-        } while (!System.Text.RegularExpressions.Regex.IsMatch(val, pattern));
+        do { val = LeggiStringa(prompt); } while (!System.Text.RegularExpressions.Regex.IsMatch(val, pattern));
         return val;
     }
 
@@ -650,7 +647,6 @@ class Program
         {
             Console.Write(prompt);
             if (int.TryParse(Console.ReadLine(), out val) && val >= 0) return val;
-            Console.WriteLine("  Inserire un numero intero valido.");
         }
     }
 
@@ -660,23 +656,14 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            if (decimal.TryParse(Console.ReadLine()?.Replace(',', '.'),
-                System.Globalization.NumberStyles.Any,
-                System.Globalization.CultureInfo.InvariantCulture, out val) && val >= 0)
-                return val;
-            Console.WriteLine("  Inserire un valore decimale valido (es. 19.99).");
+            if (decimal.TryParse(Console.ReadLine()?.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out val)) return val;
         }
     }
 
     static DateOnly LeggiData(string prompt)
     {
         DateOnly val;
-        while (true)
-        {
-            Console.Write(prompt);
-            if (DateOnly.TryParse(Console.ReadLine(), out val)) return val;
-            Console.WriteLine("  Formato data non valido. Usare yyyy-MM-dd (es. 1990-05-23).");
-        }
+        while (true) { Console.Write(prompt); if (DateOnly.TryParse(Console.ReadLine(), out val)) return val; }
     }
 
     static bool LeggiBoolean(string prompt)
@@ -684,11 +671,9 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            var k = Console.ReadKey(true);
-            Console.WriteLine(k.Key == ConsoleKey.S ? "Si" : "No");
-            if (k.Key == ConsoleKey.S) return true;
-            if (k.Key == ConsoleKey.N) return false;
-            Console.WriteLine("  Premere S o N.");
+            var k = Console.ReadKey(true).Key;
+            Console.WriteLine(k == ConsoleKey.S ? "Si" : "No");
+            if (k == ConsoleKey.S) return true; if (k == ConsoleKey.N) return false;
         }
     }
 
@@ -697,51 +682,35 @@ class Program
         while (true)
         {
             Console.Write(prompt);
-            var k = Console.ReadKey();
+            var k = Console.ReadKey().KeyChar;
             Console.WriteLine();
-            if (k.KeyChar >= min && k.KeyChar <= max) return k.KeyChar;
-            Console.WriteLine($"  Opzione non valida. Scegli tra {min} e {max}.");
+            if (k >= min && k <= max) return k;
         }
     }
 
-    // =========================================================
-    // VALIDAZIONE & UI
-    // =========================================================
     static bool Valida<T>(T obj)
     {
         var results = new List<ValidationResult>();
         var ctx = new ValidationContext(obj!);
         bool ok = Validator.TryValidateObject(obj!, ctx, results, true);
-        if (!ok)
-        {
-            Console.WriteLine("\nErrori di validazione:");
-            foreach (var r in results) Console.WriteLine($"  - {r.ErrorMessage}");
-        }
+        if (!ok) foreach (var r in results) AppLogger.Instance.LogWarning(r.ErrorMessage!);
         return ok;
     }
 
     static void Feedback(bool ok, string msgOk, string msgKo)
-        => Console.WriteLine(ok ? $"\n[OK] {msgOk}" : $"\n[ERRORE] {msgKo}");
-
-    static void StampaLista(string? json)
     {
-        if (json is null) { Console.WriteLine("Nessun dato disponibile o errore di connessione."); return; }
-        Console.WriteLine(json);
+        if (ok) AppLogger.Instance.LogSuccess(msgOk);
+        else AppLogger.Instance.LogError(msgKo);
     }
+
+    static void StampaLista(string? json) => Console.WriteLine(json ?? "Nessun dato.");
 
     static void PrintHeader(string titolo)
     {
         string line = new string('=', 42);
-        Console.WriteLine(line);
-        Console.WriteLine($"  {titolo}");
-        Console.WriteLine(line);
+        Console.WriteLine($"{line}\n  {titolo}\n{line}");
     }
 
     static void PrintSeparator() => Console.WriteLine(new string('-', 42));
-
-    static void Pausa()
-    {
-        Console.WriteLine("\nPremi un tasto per continuare...");
-        Console.ReadKey(true);
-    }
+    static void Pausa() { Console.WriteLine("\nPremi un tasto..."); Console.ReadKey(true); }
 }
