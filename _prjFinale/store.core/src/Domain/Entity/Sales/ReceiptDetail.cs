@@ -1,5 +1,5 @@
-using System.ComponentModel.DataAnnotations;
-namespace store.core.src.Domain.Entity.Catalog;
+using store.core.src.Domain.Entity.Catalog;
+namespace store.core.src.Domain.Entity.Sales;
 
 public class ReceiptDetail : BaseEntity
 {
