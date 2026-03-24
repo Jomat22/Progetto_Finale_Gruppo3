@@ -56,9 +56,14 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
         try
         {
             IEnumerable<Receipt> receipts = await _repo.GetReceiptToday_repo();
-            if (!receipts.Any()) { return ApiResponseFactory.SuccessNoContent(receipts); }
+            decimal totaleGiornaliero = receipts.Sum(r => r.TotaleDefinitivo);
 
-            return ApiResponseFactory.Success(receipts);
+            return ApiResponseFactory.Success(new
+            {
+                TotaleGiorno = totaleGiornaliero,
+                NumeroScontrini = receipts.Count(),
+                Scontrini = receipts
+            });
         }
         catch (Exception) { throw; }
     }
@@ -157,7 +162,7 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
                 }
             }
 
-            int numRows = await _repo.PostReceipt_repo(receipt);
+            int numRows = await _repo.DeleteReceipt_repo(receipt);
             if (numRows is 0) { return ApiResponseFactory.SuccessNoChanges(receipt); }
 
             return ApiResponseFactory.Success(receipt);

@@ -13,7 +13,7 @@ public class ReceiptRepository(DataContext context)
         try
         {
             IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).ThenInclude(d => d.Prodotto);
-            if (asNoTracking) { query.AsNoTracking(); }
+            if (asNoTracking) { query = query.AsNoTracking(); }
 
             return await query.FirstOrDefaultAsync(r => r.Id == id);
         }
@@ -24,7 +24,7 @@ public class ReceiptRepository(DataContext context)
         try
         {
             IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).ThenInclude(d => d.Prodotto);
-            if (asNoTracking) { query.AsNoTracking(); }
+            if (asNoTracking) {query = query.AsNoTracking(); }
 
             return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
         }
@@ -37,7 +37,7 @@ public class ReceiptRepository(DataContext context)
         try
         {
             IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).Where(r => r.MetodoPagamento.ToLower() == metodoPagamento);
-            if (asNoTracking) { query.AsNoTracking(); }
+            if (asNoTracking) { query = query.AsNoTracking(); }
 
             return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
         }
@@ -49,7 +49,7 @@ public class ReceiptRepository(DataContext context)
         try
         {
             IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).Where(r => r.DataEmissione.Date == DateTime.UtcNow.Date);
-            if (asNoTracking) { query.AsNoTracking(); }
+            if (asNoTracking) { query = query.AsNoTracking(); }
 
             return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
         }
