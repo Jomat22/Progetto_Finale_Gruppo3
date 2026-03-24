@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using store.api.src.Common;
 using store.api.src.Dto.Receipt;
+using store.api.src.Facade;
 using store.api.src.Factory;
 using store.api.src.Infrastructure.Service;
 using store.core.src.Domain.Entity.Sales;
@@ -9,9 +10,9 @@ namespace store.api.src.Controller;
 
 [ApiController]
 [Route("api/[controller]")]
-public class ReceiptController(ReceiptService service) : ControllerBase
+public class ReceiptController(IStoreFacade facade) : ControllerBase
 {
-    private readonly ReceiptService _service = service;
+    private readonly IStoreFacade _facade = facade;
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -24,7 +25,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
         {
             ReceiptGetByRequest req = new() { Id = id };
 
-            ApiResponseBase response = await _service.GetReceipt_serv(req.Id);
+            ApiResponseBase response = await _facade.GetReceiptFacade(req.Id);
 
             return response switch
             {
@@ -45,7 +46,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
     {
         try
         {
-            ApiResponseBase response = await _service.GetAllReceipt_serv();
+            ApiResponseBase response = await _facade.GetAllReceiptFacade();
 
             return response switch
             {
@@ -66,7 +67,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
     {
         try
         {
-            ApiResponseBase response = await _service.GetReceiptToday_serv();
+            ApiResponseBase response = await _facade.GetReceiptTodayFacade();
 
             return response switch
             {
@@ -87,7 +88,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
     {
         try
         {
-            ApiResponseBase response = await _service.GetReceiptByMetodo_serv(metodoPagamento);
+            ApiResponseBase response = await _facade.GetReceiptByMetodoFacade(metodoPagamento);
 
             return response switch
             {
@@ -108,7 +109,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
     {
         try
         {
-            ApiResponseBase response = await _service.PostReceipt_serv(request);
+            ApiResponseBase response = await _facade.CreateReceiptFacade(request);
 
             return response switch
             {
@@ -131,7 +132,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
         {
             ReceiptGetByRequest req = new() { Id = id };
 
-            ApiResponseBase response = await _service.DeleteReceipt_serv(req.Id);
+            ApiResponseBase response = await _facade.DeleteReceiptFacade(req.Id);
 
             return response switch
             {

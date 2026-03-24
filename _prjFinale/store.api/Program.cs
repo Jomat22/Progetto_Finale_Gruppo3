@@ -4,6 +4,7 @@ using store.core.src.Interface;
 using store.core.src.Strategy.Payment;
 using store.api.src.Infrastructure.Service;
 using store.api.src.Infrastructure.Repo;
+using store.api.src.Facade;
 
 namespace store.api;
 
@@ -61,6 +62,7 @@ public class Program {
         builder.Services.AddScoped<IPaymentStrategy, CreditCardPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, LiquidPaymentStrategy>();
         builder.Services.AddScoped<IPaymentStrategy, PaypalPaymentStrategy>();
+        builder.Services.AddScoped<IStoreFacade, StoreFacade>();
         
         var app = builder.Build();
 
