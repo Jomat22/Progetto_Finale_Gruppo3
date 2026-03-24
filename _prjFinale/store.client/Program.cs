@@ -15,7 +15,7 @@ class Program
             ConsoleKeyInfo opzione;
             do {
                 Console.Clear();
-                Console.WriteLine(new string('=', 5) + "Terminale"+ new string('=', 5));
+                Console.WriteLine(new string('=', 5) + "Terminale" + new string('=', 5));
                 Console.WriteLine("Seleziona:\n1. Aggiungi (Anagrafica)\n2. Visualizza (Anagrafica)\n3. Aggiungi vendita (Prodotto)\n4. (Esci)");
                 opzione = Console.ReadKey();
             } while (opzione.Key is < ConsoleKey.D1 or > ConsoleKey.D4);

@@ -8,7 +8,7 @@ public class ClientUpdateRequest
 
     // 'CodiceCliente' usato ai fini di verifica esistenza
     [Required(ErrorMessage = "Il Codice Cliente è obbligatorio.")]
-    [StringLength(20, ErrorMessage = "Il Codice Cliente non può superare i 20 caratteri.")]
+    [StringLength(20, MinimumLength = 3, ErrorMessage = "Il Codice Cliente deve avere una lunghezza compresa tra 3 e 20 caratteri.")]
     public string CodiceCliente { get; set; } = default!;
 
     [Required(ErrorMessage = "Specificare se il cliente è fidelizzato.")]

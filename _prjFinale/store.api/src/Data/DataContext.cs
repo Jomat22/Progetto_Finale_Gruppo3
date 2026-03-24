@@ -47,7 +47,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.PersonId).HasColumnOrder(2).HasColumnName("person_id").HasColumnType("int").IsRequired();
-            entity.Property(e => e.CodiceMeccanografico).HasColumnOrder(3).HasColumnName("codice_meccanografico").HasColumnType("varchar(10)");
+            entity.Property(e => e.CodiceMeccanografico).HasColumnOrder(3).HasColumnName("codice_meccanografico").HasColumnType("varchar(20)");
             entity.Property(e => e.EmailAziendale).HasColumnOrder(4).HasColumnName("email_aziendale").HasColumnType("varchar(255)");
             entity.Property(e => e.Password).HasColumnOrder(5).HasColumnName("password").HasColumnType("varchar(24)");
             entity.Property(e => e.Ruolo).HasColumnOrder(6).HasColumnName("ruolo").HasColumnType("varchar(50)");
@@ -81,7 +81,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.HasIndex(e => e.Sku).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
-            entity.Property(e => e.Sku).HasColumnOrder(2).HasColumnName("sku").HasColumnType("varchar(30)").IsRequired();
+            entity.Property(e => e.Sku).HasColumnOrder(2).HasColumnName("sku").HasColumnType("varchar(20)").IsRequired();
             entity.Property(e => e.Nome).HasColumnOrder(3).HasColumnName("nome").HasColumnType("varchar(100)");
             entity.Property(e => e.Prezzo).HasColumnOrder(4).HasColumnName("prezzo").HasColumnType("decimal(10,2)");
             entity.Property(e => e.Quantita).HasColumnOrder(5).HasColumnName("quantita").HasColumnType("int");
@@ -162,7 +162,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             {
                 Id = i,
                 PersonId = i, // FK verso Person 1-10
-                CodiceMeccanografico = $"{i:D10}",
+                CodiceMeccanografico = $"{i:D20}",
                 EmailAziendale = $"email{i}@gmail.com",
                 Password = "Password123!",
                 Ruolo = i % 2 == 0 ? "Admin" : "User",
@@ -200,7 +200,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             prodotti.Add(new Product
             {
                 Id = i,
-                Sku = $"SKU-{i:D5}", // Es: SKU-00001, SKU-00002... (max 30 caratteri come da tua config)
+                Sku = $"{i:D20}",
                 Nome = $"Prodotto Esempio {i}",
                 Prezzo = i,
                 Quantita = i * 10, // Quantità: 10, 20, 30...

@@ -1,6 +1,7 @@
 @baseUrl = http://localhost:5102/api/Person
 
 ### Test => Creazione Persona (successo)
+# Nota: Il 'CodiceFiscale' deve essere univoco nella tabella 'persone'
 POST {{baseUrl}}
 Content-Type: application/json
 

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using store.api.src.Data;
 
@@ -11,9 +12,11 @@ using store.api.src.Data;
 namespace store.api.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20260323111018_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace store.api.Migrations
 
                     b.Property<string>("Sku")
                         .IsRequired()
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(30)")
                         .HasColumnName("sku")
                         .HasColumnOrder(2);
 
@@ -86,7 +89,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 1",
                             Prezzo = 1m,
                             Quantita = 10,
-                            Sku = "00000000000000000001"
+                            Sku = "SKU-00001"
                         },
                         new
                         {
@@ -97,7 +100,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 2",
                             Prezzo = 2m,
                             Quantita = 20,
-                            Sku = "00000000000000000002"
+                            Sku = "SKU-00002"
                         },
                         new
                         {
@@ -108,7 +111,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 3",
                             Prezzo = 3m,
                             Quantita = 30,
-                            Sku = "00000000000000000003"
+                            Sku = "SKU-00003"
                         },
                         new
                         {
@@ -119,7 +122,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 4",
                             Prezzo = 4m,
                             Quantita = 40,
-                            Sku = "00000000000000000004"
+                            Sku = "SKU-00004"
                         },
                         new
                         {
@@ -130,7 +133,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 5",
                             Prezzo = 5m,
                             Quantita = 50,
-                            Sku = "00000000000000000005"
+                            Sku = "SKU-00005"
                         },
                         new
                         {
@@ -141,7 +144,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 6",
                             Prezzo = 6m,
                             Quantita = 60,
-                            Sku = "00000000000000000006"
+                            Sku = "SKU-00006"
                         },
                         new
                         {
@@ -152,7 +155,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 7",
                             Prezzo = 7m,
                             Quantita = 70,
-                            Sku = "00000000000000000007"
+                            Sku = "SKU-00007"
                         },
                         new
                         {
@@ -163,7 +166,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 8",
                             Prezzo = 8m,
                             Quantita = 80,
-                            Sku = "00000000000000000008"
+                            Sku = "SKU-00008"
                         },
                         new
                         {
@@ -174,7 +177,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 9",
                             Prezzo = 9m,
                             Quantita = 90,
-                            Sku = "00000000000000000009"
+                            Sku = "SKU-00009"
                         },
                         new
                         {
@@ -185,7 +188,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 10",
                             Prezzo = 10m,
                             Quantita = 100,
-                            Sku = "00000000000000000010"
+                            Sku = "SKU-00010"
                         },
                         new
                         {
@@ -196,7 +199,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 11",
                             Prezzo = 11m,
                             Quantita = 110,
-                            Sku = "00000000000000000011"
+                            Sku = "SKU-00011"
                         },
                         new
                         {
@@ -207,7 +210,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 12",
                             Prezzo = 12m,
                             Quantita = 120,
-                            Sku = "00000000000000000012"
+                            Sku = "SKU-00012"
                         },
                         new
                         {
@@ -218,7 +221,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 13",
                             Prezzo = 13m,
                             Quantita = 130,
-                            Sku = "00000000000000000013"
+                            Sku = "SKU-00013"
                         },
                         new
                         {
@@ -229,7 +232,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 14",
                             Prezzo = 14m,
                             Quantita = 140,
-                            Sku = "00000000000000000014"
+                            Sku = "SKU-00014"
                         },
                         new
                         {
@@ -240,7 +243,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 15",
                             Prezzo = 15m,
                             Quantita = 150,
-                            Sku = "00000000000000000015"
+                            Sku = "SKU-00015"
                         },
                         new
                         {
@@ -251,7 +254,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 16",
                             Prezzo = 16m,
                             Quantita = 160,
-                            Sku = "00000000000000000016"
+                            Sku = "SKU-00016"
                         },
                         new
                         {
@@ -262,7 +265,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 17",
                             Prezzo = 17m,
                             Quantita = 170,
-                            Sku = "00000000000000000017"
+                            Sku = "SKU-00017"
                         },
                         new
                         {
@@ -273,7 +276,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 18",
                             Prezzo = 18m,
                             Quantita = 180,
-                            Sku = "00000000000000000018"
+                            Sku = "SKU-00018"
                         },
                         new
                         {
@@ -284,7 +287,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 19",
                             Prezzo = 19m,
                             Quantita = 190,
-                            Sku = "00000000000000000019"
+                            Sku = "SKU-00019"
                         },
                         new
                         {
@@ -295,7 +298,7 @@ namespace store.api.Migrations
                             Nome = "Prodotto Esempio 20",
                             Prezzo = 20m,
                             Quantita = 200,
-                            Sku = "00000000000000000020"
+                            Sku = "SKU-00020"
                         });
                 });
 
@@ -1224,7 +1227,7 @@ namespace store.api.Migrations
 
                     b.Property<string>("CodiceMeccanografico")
                         .IsRequired()
-                        .HasColumnType("varchar(20)")
+                        .HasColumnType("varchar(10)")
                         .HasColumnName("codice_meccanografico")
                         .HasColumnOrder(3);
 
@@ -1288,7 +1291,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 1,
-                            CodiceMeccanografico = "00000000000000000001",
+                            CodiceMeccanografico = "0000000001",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email1@gmail.com",
                             IsDeleted = false,
@@ -1301,7 +1304,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 2,
-                            CodiceMeccanografico = "00000000000000000002",
+                            CodiceMeccanografico = "0000000002",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email2@gmail.com",
                             IsDeleted = false,
@@ -1314,7 +1317,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 3,
-                            CodiceMeccanografico = "00000000000000000003",
+                            CodiceMeccanografico = "0000000003",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email3@gmail.com",
                             IsDeleted = false,
@@ -1327,7 +1330,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 4,
-                            CodiceMeccanografico = "00000000000000000004",
+                            CodiceMeccanografico = "0000000004",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email4@gmail.com",
                             IsDeleted = false,
@@ -1340,7 +1343,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 5,
-                            CodiceMeccanografico = "00000000000000000005",
+                            CodiceMeccanografico = "0000000005",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email5@gmail.com",
                             IsDeleted = false,
@@ -1353,7 +1356,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 6,
-                            CodiceMeccanografico = "00000000000000000006",
+                            CodiceMeccanografico = "0000000006",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email6@gmail.com",
                             IsDeleted = false,
@@ -1366,7 +1369,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 7,
-                            CodiceMeccanografico = "00000000000000000007",
+                            CodiceMeccanografico = "0000000007",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email7@gmail.com",
                             IsDeleted = false,
@@ -1379,7 +1382,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 8,
-                            CodiceMeccanografico = "00000000000000000008",
+                            CodiceMeccanografico = "0000000008",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email8@gmail.com",
                             IsDeleted = false,
@@ -1392,7 +1395,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 9,
-                            CodiceMeccanografico = "00000000000000000009",
+                            CodiceMeccanografico = "0000000009",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email9@gmail.com",
                             IsDeleted = false,
@@ -1405,7 +1408,7 @@ namespace store.api.Migrations
                         new
                         {
                             Id = 10,
-                            CodiceMeccanografico = "00000000000000000010",
+                            CodiceMeccanografico = "0000000010",
                             CreatedAt = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             EmailAziendale = "email10@gmail.com",
                             IsDeleted = false,
