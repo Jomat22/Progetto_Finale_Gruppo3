@@ -36,7 +36,7 @@ public class ReceiptRepository(DataContext context)
     {
         try
         {
-            IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).Where(r => r.MetodoPagamento.ToLower() == metodoPagamento);
+            IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).Where(r => r.MetodoPagamento.ToLower() == metodoPagamento.ToLower());
             if (asNoTracking) { query = query.AsNoTracking(); }
 
             return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
