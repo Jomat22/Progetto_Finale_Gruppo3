@@ -649,7 +649,7 @@ class Program
             if (int.TryParse(Console.ReadLine(), out val) && val >= 0) return val;
         }
     }
-
+/*  metodo LeggiDecimale non aggiornato
     static decimal LeggiDecimale(string prompt)
     {
         decimal val;
@@ -659,6 +659,24 @@ class Program
             if (decimal.TryParse(Console.ReadLine()?.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out val)) return val;
         }
     }
+*/
+    static decimal LeggiDecimale(string prompt)
+{
+    decimal valore;
+    while (true)
+    {
+        Console.Write(prompt);
+        string input = Console.ReadLine()?.Replace(',', '.').Trim() ?? "";
+
+        if (decimal.TryParse(input, System.Globalization.NumberStyles.Any, 
+            System.Globalization.CultureInfo.InvariantCulture, out valore))
+        {
+            return valore;
+        }
+
+        Console.WriteLine("[ERRORE] Inserisci un numero valido (es: 1500 o 1500.50)");
+    }
+}
 
     static DateOnly LeggiData(string prompt)
     {
