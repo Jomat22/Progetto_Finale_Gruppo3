@@ -61,7 +61,7 @@ public class ReceiptController(ReceiptService service) : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("DateTime.UtcNow.Date")]
+    [HttpGet("oggi")]
     public async Task<IActionResult> GetReceiptToday_cont()
     {
         try
