@@ -220,6 +220,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             scontrini.Add(new Receipt
             {
                 Id = i,
+                ClientId = (i % 10) + 1,
                 DataEmissione = new DateTime(2024, 1, 1).AddDays(i), // Date scalate nel 2024
                 MetodoPagamento = i % 2 == 0 ? "Contanti" : "Carta di Credito",
                 TotaleDefinitivo = 0, // Lo lasceremo a 0 o calcolato, ma nel Seed serve un valore
