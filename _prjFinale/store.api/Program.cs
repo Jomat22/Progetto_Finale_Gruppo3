@@ -51,6 +51,8 @@ public class Program {
         builder.Services.AddScoped<EmployeeService>();
         builder.Services.AddScoped<EmployeeRepository>();
         builder.Services.AddScoped<ClientService>();
+        builder.Services.AddScoped<ReceiptService>();
+        builder.Services.AddScoped<ReceiptRepository>();
         builder.Services.AddScoped<ClientRepository>();
         builder.Services.AddScoped<ProductService>();
         builder.Services.AddScoped<ProductRepository>();

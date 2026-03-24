@@ -1,4 +1,4 @@
-namespace store.client.src.Singleton;
+namespace store.client.Singleton;
 
 public sealed class AppLogger
 {
