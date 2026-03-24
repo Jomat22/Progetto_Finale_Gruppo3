@@ -1,6 +1,5 @@
-using store.client.src.Singleton;
-
-namespace store.client.src.Observer;
+using store.client.Singleton;
+namespace store.client.Observer;
 
 public class LoggerObserver : IOrderObserver
 {
