@@ -561,7 +561,7 @@ class Program
     {
         Console.Clear();
         PrintHeader("ORDINI DEL GIORNO E TOTALE");
-        var result = GetAsync("api/Order/daily-report").GetAwaiter().GetResult();
+        var result = GetAsync("api/Receipt/oggi").GetAwaiter().GetResult();
         
         if (result != null)
         {
