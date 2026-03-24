@@ -2,7 +2,6 @@
 using store.api.src.Dto.Person;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
-
 namespace store.client;
 
 class Program
