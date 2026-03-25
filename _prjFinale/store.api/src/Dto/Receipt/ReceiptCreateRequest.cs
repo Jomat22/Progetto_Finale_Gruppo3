@@ -3,6 +3,9 @@ namespace store.api.src.Dto.Receipt;
 
 public class ReceiptCreateRequest
 {
+    [Required(ErrorMessage = "Il cliente è obbligatorio.")]
+    public int ClientId { get; set; }
+
     [Required(ErrorMessage = "Il metodo di pagamento è obbligatorio.")]
     [StringLength(50, ErrorMessage = "Il metodo di pagamento non può superare i 50 caratteri.")]
     public string MetodoPagamento { get; set; } = default!;

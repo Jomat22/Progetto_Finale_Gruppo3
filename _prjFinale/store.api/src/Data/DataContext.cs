@@ -57,12 +57,12 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.CreatedAt).HasColumnOrder(9).HasColumnName("created_at").HasColumnType("datetime(6)");
             entity.Property(e => e.ModifiedAt).HasColumnOrder(10).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
-        
+
         modelBuilder.Entity<Client>(entity =>
         {
             entity.ToTable("clienti");
             entity.HasKey(pk => pk.Id);
-            entity.HasOne(np => np.Person).WithOne().HasForeignKey<Client>(fk => fk.PersonId).OnDelete(DeleteBehavior.Cascade);;
+            entity.HasOne(np => np.Person).WithOne().HasForeignKey<Client>(fk => fk.PersonId).OnDelete(DeleteBehavior.Cascade); ;
             entity.HasIndex(e => e.CodiceCliente).IsUnique();
 
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
@@ -74,7 +74,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.CreatedAt).HasColumnOrder(7).HasColumnName("created_at").HasColumnType("datetime(6)");
             entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
-        
+
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("prodotti");
@@ -95,7 +95,8 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
         {
             entity.ToTable("scontrini");
             entity.HasKey(e => e.Id);
-
+            entity.Property(e => e.ClientId).HasColumnOrder(5).HasColumnName("client_id").HasColumnType("int").IsRequired();
+            entity.HasOne(r => r.Client).WithMany().HasForeignKey(r => r.ClientId).OnDelete(DeleteBehavior.Restrict);
             entity.Property(e => e.Id).HasColumnOrder(1).HasColumnName("id").HasColumnType("int").ValueGeneratedOnAdd().IsRequired();
             entity.Property(e => e.DataEmissione).HasColumnOrder(2).HasColumnName("data_emissione").HasColumnType("datetime(6)").IsRequired();
             entity.Property(e => e.TotaleDefinitivo).HasColumnOrder(3).HasColumnName("totale_definitivo").HasColumnType("decimal(10,2)").IsRequired();
@@ -122,7 +123,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             entity.Property(e => e.ModifiedAt).HasColumnOrder(8).HasColumnName("modified_at").HasColumnType("datetime(6)");
         });
 
-    // ====================================================================================================
+        // ====================================================================================================
         // 1. SEED PERSONE (30 RECORD)
         /*
             * Nota 1: Le persone da 21 a 30 sono "scollegate" ai fini di test (assegnazione manuale id persona).
@@ -219,6 +220,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             scontrini.Add(new Receipt
             {
                 Id = i,
+                ClientId = (i % 10) + 1,
                 DataEmissione = new DateTime(2024, 1, 1).AddDays(i), // Date scalate nel 2024
                 MetodoPagamento = i % 2 == 0 ? "Contanti" : "Carta di Credito",
                 TotaleDefinitivo = 0, // Lo lasceremo a 0 o calcolato, ma nel Seed serve un valore
@@ -249,7 +251,7 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             });
 
             // Aggiungiamo un secondo prodotto alla stessa ricevuta (es: il prodotto successivo)
-            int secondoProdottoId = (i < 20) ? i + 1 : 1; 
+            int secondoProdottoId = (i < 20) ? i + 1 : 1;
             dettagli.Add(new ReceiptDetail
             {
                 Id = dettaglioIdCounter++,
@@ -263,6 +265,6 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             });
         }
         modelBuilder.Entity<ReceiptDetail>().HasData(dettagli);
-    // ====================================================================================================
+        // ====================================================================================================
     }
 }

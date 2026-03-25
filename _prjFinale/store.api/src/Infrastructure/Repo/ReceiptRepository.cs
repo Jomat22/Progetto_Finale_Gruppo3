@@ -24,13 +24,12 @@ public class ReceiptRepository(DataContext context)
         try
         {
             IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).ThenInclude(d => d.Prodotto);
-            if (asNoTracking) {query = query.AsNoTracking(); }
+            if (asNoTracking) { query = query.AsNoTracking(); }
 
             return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
         }
         catch (Exception) { throw; }
     }
-
 
     public async Task<IEnumerable<Receipt>> GetReceiptByMetodo_repo(string metodoPagamento, bool asNoTracking = true)
     {
@@ -72,6 +71,18 @@ public class ReceiptRepository(DataContext context)
         {
             _context.Remove(receipt);
             return await _context.SaveChangesAsync();
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task<IEnumerable<Receipt>> GetReceiptByClient_repo(int clientId, bool asNoTracking = true)
+    {
+        try
+        {
+            IQueryable<Receipt> query = _context.Receipts.Include(r => r.RicevutaDettagli).ThenInclude(d => d.Prodotto).Where(r => r.ClientId == clientId);
+            if (asNoTracking) { query = query.AsNoTracking(); }
+
+            return await query.OrderByDescending(r => r.DataEmissione).ToListAsync();
         }
         catch (Exception) { throw; }
     }

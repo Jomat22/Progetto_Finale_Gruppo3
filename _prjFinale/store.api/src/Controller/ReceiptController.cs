@@ -144,4 +144,25 @@ public class ReceiptController(IStoreFacade facade) : ControllerBase
         catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
     }
 
+ [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("storico/cliente/{clientId:int}")]
+    public async Task<IActionResult> GetStoricoByClient_cont([FromRoute] int clientId)
+    {
+        try
+        {
+            ApiResponseBase response = await _facade.GetStoricoByClientFacade(clientId);
+
+            return response switch
+            {
+                ApiResponse_Success<IEnumerable<Receipt>> success => Ok(success),
+                ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
+                _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
+            };
+        }
+        catch (Exception ex) { return StatusCode(500, $"Dettaglio dell'eccezione -> {ex.Message}"); }
+    }
+
 }

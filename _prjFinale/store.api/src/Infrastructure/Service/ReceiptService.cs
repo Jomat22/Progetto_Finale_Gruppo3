@@ -129,6 +129,7 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
 
             var receipt = new Receipt
             {
+                ClientId = request.ClientId,
                 DataEmissione = DateTime.UtcNow,
                 MetodoPagamento = request.MetodoPagamento,
                 TotaleDefinitivo = totale,
@@ -166,6 +167,23 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
             if (numRows is 0) { return ApiResponseFactory.SuccessNoChanges(receipt); }
 
             return ApiResponseFactory.Success(receipt);
+        }
+        catch (Exception) { throw; }
+    }
+
+    public async Task<ApiResponseBase> GetStoricoByClient_serv(int clientId)
+    {
+        try
+        {
+            IEnumerable<Receipt> receipts = await _repo.GetReceiptByClient_repo(clientId);
+
+            return ApiResponseFactory.Success(new
+            {
+                ClientId = clientId,
+                TotaleSpeso = receipts.Sum(r => r.TotaleDefinitivo),
+                NumeroOrdini = receipts.Count(),
+                Scontrini = receipts
+            });
         }
         catch (Exception) { throw; }
     }
