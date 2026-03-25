@@ -534,28 +534,41 @@ class Program
     // METODI REPORT 
     // =========================================================
     static void VisualizzaStoricoOrdiniCliente()
+{
+    Console.Clear();
+    PrintHeader("STORICO ORDINI CLIENTE");
+    string codiceCliente = LeggiStringa("Inserisci Codice Cliente: ").ToUpper();
+
+    var clientJson = GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+    if (clientJson == null)
     {
-        Console.Clear();
-        PrintHeader("STORICO ORDINI CLIENTE");
-        string codiceCliente = LeggiStringa("Inserisci Codice Cliente: ").ToUpper();
-        var result = GetAsync($"api/Order/history/{codiceCliente}").GetAwaiter().GetResult();
-        
-        if (result != null)
-        {
-            Console.WriteLine(result);
-            var evento = new OrderCreatedEvent(
-                "Riepilogo Storico", 
-                0.00m, 
-                "In sola lettura", 
-                DateTime.Now
-            );
-            _orderPublisher.NotifyOrderCreated(evento);
-        }
-        else
-        {
-            AppLogger.Instance.LogWarning($"Nessun ordine trovato per {codiceCliente}.");
-        }
+        AppLogger.Instance.LogWarning($"Cliente '{codiceCliente}' non trovato.");
+        return;
     }
+
+    int clientId;
+    try
+    {
+        var doc = JsonDocument.Parse(clientJson);
+        clientId = doc.RootElement.GetProperty("data").GetProperty("id").GetInt32();
+    }
+    catch
+    {
+        AppLogger.Instance.LogError("Impossibile leggere l'Id del cliente dalla risposta.");
+        return;
+    }
+
+    var result = GetAsync($"api/Receipt/storico/cliente/{clientId}").GetAwaiter().GetResult();
+
+    if (result != null)
+    {
+        Console.WriteLine(result);
+    }
+    else
+    {
+        AppLogger.Instance.LogWarning($"Nessun ordine trovato per il cliente '{codiceCliente}'.");
+    }
+}
 
     static void VisualizzaOrdiniDelGiorno()
     {
