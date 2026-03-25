@@ -480,3 +480,7 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+_prjFinale/store.api/appsettings.json
+_prjFinale/store.api/Migrations/20260324164314_Init.cs
+_prjFinale/store.api/Migrations/20260324164314_Init.Designer.cs
+_prjFinale/store.api/Migrations/DataContextModelSnapshot.cs

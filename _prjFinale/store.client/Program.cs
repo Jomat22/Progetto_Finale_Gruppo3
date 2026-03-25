@@ -7,6 +7,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using store.client.Observer;
 using store.client.Singleton;
+using store.core.src.Const;
 
 namespace store.client;
 
@@ -23,13 +24,18 @@ class Program
     };
 
     // =========================================================
+    // STATO SESSIONE
+    // =========================================================
+    static string? _sessioneEmail    = null;
+    static string? _sessioneRuolo    = null;
+    static string? _sessioneNome     = null;
+
+    // =========================================================
     // ENTRY POINT
     // =========================================================
     static void Main()
     {
-
         AppLogger.Instance.LogInfo("Terminale Negozio avviato.");
-        
 
         _orderPublisher.Subscribe(new LoggerObserver());
         _orderPublisher.Subscribe(new MagazziniereObserver("Sistema Centrale"));
@@ -47,13 +53,89 @@ class Program
 
             switch (ReadKey("Seleziona ruolo: ", '0', '2'))
             {
-                case '1': MenuAdmin(); break;
-                case '2': MenuMagazziniere(); break;
+                case '1':
+                    if (Login("Admin"))
+                    {
+                        MenuAdmin();
+                        Logout();
+                    }
+                    break;
+                case '2':
+                    if (Login("Magazziniere"))
+                    {
+                        MenuMagazziniere();
+                        Logout();
+                    }
+                    break;
                 case '0': run = false; break;
             }
         }
         AppLogger.Instance.LogInfo("Chiusura applicazione.");
         Console.WriteLine("\nArrivederci!");
+    }
+
+    // =========================================================
+    // LOGIN / LOGOUT
+    // =========================================================
+
+
+    static bool Login(string ruoloRichiesto)
+    {
+        Console.Clear();
+        PrintHeader($"LOGIN — {ruoloRichiesto.ToUpper()}");
+
+        string email    = LeggiStringa("Email aziendale: ");
+        string password = LeggiStringa("Password: ");
+
+        var payload = new { EmailAziendale = email, Password = password };
+
+        try
+        {
+            var response = _http.PostAsJsonAsync("api/Auth", payload).GetAwaiter().GetResult();
+
+            if (!response.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogError("Credenziali non valide. Accesso negato.");
+                Pausa();
+                return false;
+            }
+
+            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var doc = JsonDocument.Parse(body);
+            var data = doc.RootElement.GetProperty("Data");
+
+            _sessioneEmail = data.GetProperty("EmailAziendale").GetString();
+            _sessioneRuolo = data.GetProperty("Ruolo").GetString();
+
+            if (data.TryGetProperty("Person", out var person) &&
+                person.ValueKind != JsonValueKind.Null)
+            {
+                string nome    = person.GetProperty("Nome").GetString() ?? "";
+                string cognome = person.GetProperty("Cognome").GetString() ?? "";
+                _sessioneNome  = $"{nome} {cognome}".Trim();
+            }
+            else
+            {
+                _sessioneNome = _sessioneEmail;
+            }
+
+            AppLogger.Instance.LogSuccess($"Accesso effettuato come {_sessioneNome} [{_sessioneRuolo}].");
+            return true;
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore durante il login: {ex.Message}");
+            Pausa();
+            return false;
+        }
+    }
+
+    static void Logout()
+    {
+        AppLogger.Instance.LogInfo($"Logout effettuato per {_sessioneNome} [{_sessioneRuolo}].");
+        _sessioneEmail = null;
+        _sessioneRuolo = null;
+        _sessioneNome  = null;
     }
 
     // =========================================================
@@ -69,8 +151,8 @@ class Program
             Console.WriteLine(" [1]  Gestione Anagrafica Persone");
             Console.WriteLine(" [2]  Gestione Dipendenti");
             Console.WriteLine(" [3]  Gestione Clienti");
-            Console.WriteLine(" [4]  Report Ordini del Giorno"); 
-            Console.WriteLine(" [0]  Torna indietro");
+            Console.WriteLine(" [4]  Report Ordini del Giorno");
+            Console.WriteLine(" [0]  Torna indietro (Logout)");
             PrintSeparator();
 
             switch (ReadKey("Seleziona: ", '0', '4'))
@@ -78,7 +160,7 @@ class Program
                 case '1': MenuPersone(); break;
                 case '2': MenuDipendenti(); break;
                 case '3': MenuClienti(); break;
-                case '4': VisualizzaOrdiniDelGiorno(); Pausa(); break; 
+                case '4': VisualizzaOrdiniDelGiorno(); Pausa(); break;
                 case '0': run = false; break;
             }
         }
@@ -300,18 +382,18 @@ class Program
             Console.WriteLine(" [3]  Elimina cliente");
             Console.WriteLine(" [4]  Cerca cliente (Cod. Cliente)");
             Console.WriteLine(" [5]  Lista tutti i clienti");
-            Console.WriteLine(" [6]  Visualizza Storico Ordini Cliente"); 
+            Console.WriteLine(" [6]  Visualizza Storico Ordini Cliente");
             Console.WriteLine(" [0]  Torna indietro");
             PrintSeparator();
 
-            switch (ReadKey("Seleziona: ", '0', '6')) 
+            switch (ReadKey("Seleziona: ", '0', '6'))
             {
                 case '1': AggiungiCliente();  Pausa(); break;
                 case '2': ModificaCliente();  Pausa(); break;
                 case '3': EliminaCliente();   Pausa(); break;
                 case '4': CercaCliente();     Pausa(); break;
                 case '5': ListaClienti();     Pausa(); break;
-                case '6': VisualizzaStoricoOrdiniCliente(); Pausa(); break; 
+                case '6': VisualizzaStoricoOrdiniCliente(); Pausa(); break;
                 case '0': run = false; break;
             }
         }
@@ -321,7 +403,7 @@ class Program
     {
         Console.Clear();
         PrintHeader("AGGIUNGI CLIENTE");
-        
+
         ClientCreateRequest req = new();
         req.PersonId             = LeggiIntero("ID Persona associata: ");
         req.CodiceCliente        = LeggiStringa("Codice Cliente (3-20 car.): ").ToUpper();
@@ -393,12 +475,12 @@ class Program
             PrintHeader("MAGAZZINIERE");
             Console.WriteLine(" [1]  Gestione Prodotti (CRUD)");
             Console.WriteLine(" [2]  Visualizza Anagrafiche");
-            Console.WriteLine(" [3]  Visualizza ORDINI DEL GIORNO"); 
-            Console.WriteLine(" [4]  Visualizza STORICO ORDINI Cliente"); 
-            Console.WriteLine(" [0]  Torna indietro");
+            Console.WriteLine(" [3]  Visualizza ORDINI DEL GIORNO");
+            Console.WriteLine(" [4]  Visualizza STORICO ORDINI Cliente");
+            Console.WriteLine(" [0]  Torna indietro (Logout)");
             PrintSeparator();
 
-            switch (ReadKey("Seleziona: ", '0', '4')) 
+            switch (ReadKey("Seleziona: ", '0', '4'))
             {
                 case '1': MenuProdotti(); break;
                 case '2': MenuVisualizzaAnagrafiche(); break;
@@ -450,8 +532,49 @@ class Program
 
         if (!Valida(req)) return;
 
+        string metodoPagamento = ScegliMetodoPagamento();
+        string esitoPagamento  = EseguiPagamentoLocale(metodoPagamento, req.Prezzo);
+        Console.WriteLine($"\n  {esitoPagamento}");
+        // --------------------------------
+
         var ok = PostAsync<ProductCreateRequest>("api/Product", req).GetAwaiter().GetResult();
         Feedback(ok, "Prodotto aggiunto con successo.", "Aggiunta prodotto fallita.");
+    }
+
+
+    static string ScegliMetodoPagamento()
+    {
+        Console.WriteLine();
+        Console.WriteLine("  Seleziona metodo di pagamento:");
+        Console.WriteLine("  [1]  Carta di credito");
+        Console.WriteLine("  [2]  Contanti");
+        Console.WriteLine("  [3]  PayPal");
+        Console.WriteLine("  [4]  Bitcoin");
+        PrintSeparator();
+
+        while (true)
+        {
+            switch (ReadKey("  Metodo: ", '1', '4'))
+            {
+                case '1': return PaymentProvider.CreditCard;
+                case '2': return PaymentProvider.Liquid;
+                case '3': return PaymentProvider.Paypal;
+                case '4': return PaymentProvider.Bitcoin;
+            }
+        }
+    }
+
+
+    static string EseguiPagamentoLocale(string provider, decimal importo)
+    {
+        return provider switch
+        {
+            PaymentProvider.CreditCard => new store.core.src.Strategy.Payment.CreditCardPaymentStrategy().ExecutePayment(importo),
+            PaymentProvider.Liquid     => new store.core.src.Strategy.Payment.LiquidPaymentStrategy().ExecutePayment(importo),
+            PaymentProvider.Paypal     => new store.core.src.Strategy.Payment.PaypalPaymentStrategy().ExecutePayment(importo),
+            PaymentProvider.Bitcoin    => new store.core.src.Strategy.Payment.BitcoinPaymentStrategy().ExecutePayment(importo),
+            _                          => $"Metodo '{provider}' non supportato."
+        };
     }
 
     static void ModificaProdotto()
@@ -531,29 +654,42 @@ class Program
     }
 
     // =========================================================
-    // METODI REPORT 
+    // METODI REPORT
     // =========================================================
     static void VisualizzaStoricoOrdiniCliente()
     {
         Console.Clear();
         PrintHeader("STORICO ORDINI CLIENTE");
         string codiceCliente = LeggiStringa("Inserisci Codice Cliente: ").ToUpper();
-        var result = GetAsync($"api/Order/history/{codiceCliente}").GetAwaiter().GetResult();
-        
+
+        int clientId;
+        try
+        {
+            var response = _http.GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+            if (!response.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogWarning($"Cliente '{codiceCliente}' non trovato.");
+                return;
+            }
+            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var doc = JsonDocument.Parse(body);
+            clientId = doc.RootElement.GetProperty("Data").GetProperty("Id").GetInt32();
+        }
+        catch
+        {
+            AppLogger.Instance.LogError("Impossibile leggere l'Id del cliente dalla risposta.");
+            return;
+        }
+
+        var result = GetAsync($"api/Receipt/storico/cliente/{clientId}").GetAwaiter().GetResult();
+
         if (result != null)
         {
             Console.WriteLine(result);
-            var evento = new OrderCreatedEvent(
-                "Riepilogo Storico", 
-                0.00m, 
-                "In sola lettura", 
-                DateTime.Now
-            );
-            _orderPublisher.NotifyOrderCreated(evento);
         }
         else
         {
-            AppLogger.Instance.LogWarning($"Nessun ordine trovato per {codiceCliente}.");
+            AppLogger.Instance.LogWarning($"Nessun ordine trovato per il cliente '{codiceCliente}'.");
         }
     }
 
@@ -561,8 +697,8 @@ class Program
     {
         Console.Clear();
         PrintHeader("ORDINI DEL GIORNO E TOTALE");
-        var result = GetAsync("api/Order/daily-report").GetAwaiter().GetResult();
-        
+        var result = GetAsync("api/Receipt/oggi").GetAwaiter().GetResult();
+
         if (result != null)
         {
             Console.WriteLine(result);
@@ -574,7 +710,7 @@ class Program
     }
 
     // =========================================================
-    // HTTP HELPERS 
+    // HTTP HELPERS
     // =========================================================
     static async Task<bool> PostAsync<T>(string endpoint, T payload)
     {
@@ -652,11 +788,19 @@ class Program
 
     static decimal LeggiDecimale(string prompt)
     {
-        decimal val;
+        decimal valore;
         while (true)
         {
             Console.Write(prompt);
-            if (decimal.TryParse(Console.ReadLine()?.Replace(',', '.'), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out val)) return val;
+            string input = Console.ReadLine()?.Replace(',', '.').Trim() ?? "";
+
+            if (decimal.TryParse(input, System.Globalization.NumberStyles.Any,
+                System.Globalization.CultureInfo.InvariantCulture, out valore))
+            {
+                return valore;
+            }
+
+            Console.WriteLine("[ERRORE] Inserisci un numero valido (es: 1500 o 1500.50)");
         }
     }
 
