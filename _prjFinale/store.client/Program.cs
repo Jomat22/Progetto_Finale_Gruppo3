@@ -539,18 +539,18 @@ class Program
     PrintHeader("STORICO ORDINI CLIENTE");
     string codiceCliente = LeggiStringa("Inserisci Codice Cliente: ").ToUpper();
 
-    var clientJson = GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
-    if (clientJson == null)
-    {
-        AppLogger.Instance.LogWarning($"Cliente '{codiceCliente}' non trovato.");
-        return;
-    }
-
     int clientId;
     try
     {
-        var doc = JsonDocument.Parse(clientJson);
-        clientId = doc.RootElement.GetProperty("data").GetProperty("id").GetInt32();
+        var response = _http.GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+        if (!response.IsSuccessStatusCode)
+        {
+            AppLogger.Instance.LogWarning($"Cliente '{codiceCliente}' non trovato.");
+            return;
+        }
+        string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+        var doc = JsonDocument.Parse(body);
+        clientId = doc.RootElement.GetProperty("Data").GetProperty("Id").GetInt32();
     }
     catch
     {
