@@ -8,6 +8,7 @@ using System.Text.Json;
 using store.client.Observer;
 using store.client.Singleton;
 using store.core.src.Const;
+using System.Reflection.Metadata.Ecma335;
 
 namespace store.client;
 
@@ -106,6 +107,19 @@ class Program
 
             _sessioneEmail = data.GetProperty("EmailAziendale").GetString();
             _sessioneRuolo = data.GetProperty("Ruolo").GetString();
+
+            //Controllo sul ruolo dell'utente che sta accedendo
+            if (!string.Equals(_sessioneRuolo, ruoloRichiesto, StringComparison.OrdinalIgnoreCase) && ruoloRichiesto !="Admin")
+            {
+                AppLogger.Instance.LogError($"Accesso negato: il tuo ruolo ({_sessioneRuolo}) non autorizza l'accesso a questa sezione ({ruoloRichiesto}).");
+            
+                // Reset delle variabili di sessione per sicurezza
+                _sessioneEmail = null;
+                _sessioneRuolo = null;
+            
+            Pausa();
+            return false;
+            }
 
             if (data.TryGetProperty("Person", out var person) &&
                 person.ValueKind != JsonValueKind.Null)
