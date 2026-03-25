@@ -8,6 +8,7 @@ using System.Text.Json;
 using store.client.Observer;
 using store.client.Singleton;
 using store.core.src.Const;
+using System.Reflection.Metadata.Ecma335;
 
 namespace store.client;
 
@@ -106,6 +107,19 @@ class Program
 
             _sessioneEmail = data.GetProperty("EmailAziendale").GetString();
             _sessioneRuolo = data.GetProperty("Ruolo").GetString();
+
+            //Controllo sul ruolo dell'utente che sta accedendo
+            if (!string.Equals(_sessioneRuolo, ruoloRichiesto, StringComparison.OrdinalIgnoreCase) && ruoloRichiesto !="Admin")
+            {
+                AppLogger.Instance.LogError($"Accesso negato: il tuo ruolo ({_sessioneRuolo}) non autorizza l'accesso a questa sezione ({ruoloRichiesto}).");
+            
+                // Reset delle variabili di sessione per sicurezza
+                _sessioneEmail = null;
+                _sessioneRuolo = null;
+            
+            Pausa();
+            return false;
+            }
 
             if (data.TryGetProperty("Person", out var person) &&
                 person.ValueKind != JsonValueKind.Null)
@@ -221,25 +235,130 @@ class Program
     static void ModificaPersona()
     {
         Console.Clear();
-        PrintHeader("MODIFICA PERSONA");
+        PrintHeader("MODIFICA SELETTIVA");
 
-        PersonUpdateRequest req = new();
-        req.CodiceFiscale   = LeggiStringa("Codice Fiscale persona da modificare (16 car.): ").ToUpper();
-        req.Nome            = LeggiStringa("Nuovo Nome: ");
-        req.Cognome         = LeggiStringa("Nuovo Cognome: ");
-        req.Sesso           = LeggiRegex("Sesso (M/F): ", @"^[MFmf]$").ToUpper();
-        req.DataNascita     = LeggiData("Data di nascita (yyyy-MM-dd): ");
-        req.Citta           = LeggiStringa("Citta: ");
-        req.Provincia       = LeggiStringa("Provincia (max 5 car.): ");
-        req.CodicePostale   = LeggiStringa("CAP: ");
-        req.Indirizzo       = LeggiStringa("Indirizzo: ");
-        req.NumeroContatto  = LeggiStringa("Numero di contatto: ");
-        req.Email           = LeggiStringa("Email: ");
+        string codiceFiscale = LeggiStringa("Codice Fiscale della persona da modificare: ").ToUpper();
+    
+        PersonUpdateRequest req = null!;
 
-        if (!Valida(req)) return;
+        try 
+        {
+            //Recupero la risposta dall'API
+            var json = GetAsync($"api/Person/{codiceFiscale}").GetAwaiter().GetResult();
+            
+            if (string.IsNullOrWhiteSpace(json)) {
+                AppLogger.Instance.LogError("Persona non trovata.");
+                Pausa();
+                return;
+            }
 
-        var ok = PutAsync<PersonUpdateRequest>("api/Person", req).GetAwaiter().GetResult();
-        Feedback(ok, "Persona modificata con successo.", "Modifica persona fallita.");
+            //Navigo nel JSON per trovare il nodo "Data"
+            using (JsonDocument doc = JsonDocument.Parse(json))
+            {
+                // Verifico se esiste la proprietà "Data" (visto che il tuo JSON la usa come contenitore)
+                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<PersonUpdateRequest>(dataElement.GetRawText(), options)!;
+                }
+                else 
+                {
+                    // Se non c'è "Data", provo a deserializzare la radice
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<PersonUpdateRequest>(json, options)!;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore nel caricamento: {ex.Message}");
+            Pausa();
+            return;
+        }
+
+        if (req == null) return;
+
+        //Logica di Selezione
+        bool modNome = false, modCognome = false, modSesso = false, modDataNascita = false, modCitta = false, modProvincia = false, modCap = false, modIndirizzo = false, modNumeroContatto = false, modEmail = false;
+        bool selezioneInCorso = true;
+
+        while (selezioneInCorso)
+        {
+            Console.Clear();
+            PrintHeader($"MODIFICA PERSONA: {codiceFiscale}");
+
+            Console.WriteLine($" [1] --- {(modNome ? "[V]" : "[X]")} Nome                   (Attuale: {req.Nome})");
+            Console.WriteLine($" [2] --- {(modCognome ? "[V]" : "[X]")} Cognome                (Attuale: {req.Cognome})");
+            Console.WriteLine($" [3] --- {(modSesso ? "[V]" : "[X]")} Sesso                  (Attuale: {req.Sesso})");
+            Console.WriteLine($" [4] --- {(modDataNascita ? "[V]" : "[X]")} Data di Nascita        (Attuale: {req.DataNascita:yyyy-MM-dd})");
+            Console.WriteLine($" [5] --- {(modCitta ? "[V]" : "[X]")} Città                  (Attuale: {req.Citta})");
+            Console.WriteLine($" [6] --- {(modProvincia ? "[V]" : "[X]")} Provincia              (Attuale: {req.Provincia})");
+            Console.WriteLine($" [7] --- {(modCap ? "[V]" : "[X]")} CAP                    (Attuale: {req.CodicePostale})");
+            Console.WriteLine($" [8] --- {(modIndirizzo ? "[V]" : "[X]")} Indirizzo              (Attuale: {req.Indirizzo})");
+            Console.WriteLine($" [9] --- {(modNumeroContatto ? "[V]" : "[X]")} Numero Contatto        (Attuale: {req.NumeroContatto})");
+            Console.WriteLine($" [0] --- {(modEmail ? "[V]" : "[X]")} Email                  (Attuale: {req.Email})");
+            PrintSeparator();
+            Console.WriteLine(" [c] Continua e inserisci i nuovi dati");
+            Console.WriteLine(" [b] Annulla ed esci");
+            PrintSeparator();
+
+            char scelta = ReadKey("Seleziona opzione: ", '0', 'c');
+
+            switch (scelta)
+            {
+                case '1': modNome = !modNome; break;
+                case '2': modCognome = !modCognome; break;
+                case '3': modSesso = !modSesso; break;
+                case '4': modDataNascita = !modDataNascita; break;
+                case '5': modCitta = !modCitta; break;
+                case '6': modProvincia = !modProvincia; break;
+                case '7': modCap = !modCap; break;
+                case '8': modIndirizzo = !modIndirizzo; break;
+                case '9': modNumeroContatto = !modNumeroContatto; break;
+                case '0': modEmail = !modEmail; break;
+                case 'b': return;
+                case 'c': selezioneInCorso = false; break;
+            }
+        }
+
+        // Fase di Inserimento
+        // Se non entri nell'IF, req mantiene il valore scaricato dal DB
+        Console.WriteLine("\n--- Inserimento nuovi dati ---");
+        if (modNome)     req.Nome = LeggiStringa("Nuovo Nome: ");
+        if (modCognome)  req.Cognome = LeggiStringa("Nuovo Cognome: ");
+        if (modSesso)    req.Sesso = LeggiRegex("Nuovo sesso (M/F): ", @"^[MFmf]$").ToUpper();
+        if (modDataNascita) req.DataNascita = LeggiData("Nuova data di nascita (yyyy-MM-dd): ");
+        if (modCitta)    req.Citta = LeggiStringa("Nuova Città: ");
+        if (modProvincia) req.Provincia = LeggiStringa("Nuova Provincia: ");
+        if (modCap)      req.CodicePostale = LeggiStringa("Nuovo CAP: ");
+        if (modIndirizzo) req.Indirizzo = LeggiStringa("Nuovo Indirizzo: ");
+        if (modNumeroContatto) req.NumeroContatto = LeggiStringa("Nuovo Numero Contatto: ");
+        if (modEmail)    req.Email = LeggiStringa("Nuova Email: ");
+
+        // Salvataggio
+        Console.Write("\nSalvare le modifiche nel database? (S/N): ");
+        if (Console.ReadKey(true).Key == ConsoleKey.S)
+        {
+            //Validazione inserimento secondo i vincoli della classe PersonUpdateRequest (Data Annotations)
+            var context = new ValidationContext(req, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(req, context, results, true);
+
+            if (isValid)
+            {
+                var ok = PutAsync("api/Person", req).GetAwaiter().GetResult();
+                Feedback(ok, "Dati aggiornati con successo!", "Errore durante il salvataggio.");
+            }
+            else
+            {
+                AppLogger.Instance.LogError("I dati inseriti non sono validi:");
+                foreach (var validationResult in results)
+                {
+                    Console.WriteLine($"- {validationResult.ErrorMessage}");
+                }
+            }
+        }
     }
 
     static void EliminaPersona()
@@ -323,20 +442,116 @@ class Program
     static void ModificaDipendente()
     {
         Console.Clear();
-        PrintHeader("MODIFICA DIPENDENTE");
+        PrintHeader("MODIFICA SELETTIVA");
 
-        EmployeeUpdateRequest req = new();
-        req.CodiceMeccanografico = LeggiStringa("Codice Meccanografico dipendente da modificare: ").ToUpper();
-        req.PersonId             = LeggiIntero("Nuovo ID Persona associata: ");
-        req.EmailAziendale       = LeggiStringa("Nuova Email aziendale: ");
-        req.Password             = LeggiStringa("Nuova Password (8-24 car.): ");
-        req.Ruolo                = LeggiStringa("Nuovo Ruolo: ");
-        req.Salario              = LeggiDecimale("Nuovo Salario (euro): ");
+        string codMecc = LeggiStringa("Codice Meccanografico del dipendente da modificare: ").ToUpper();
+    
+        EmployeeUpdateRequest req = null!;
 
-        if (!Valida(req)) return;
+        try 
+        {
+            //Recupero la risposta dall'API
+            var json = GetAsync($"api/Employee/{codMecc}").GetAwaiter().GetResult();
+            
+            if (string.IsNullOrWhiteSpace(json)) {
+                AppLogger.Instance.LogError("Dipendente non trovato.");
+                Pausa();
+                return;
+            }
 
-        var ok = PutAsync<EmployeeUpdateRequest>("api/Employee", req).GetAwaiter().GetResult();
-        Feedback(ok, "Dipendente modificato con successo.", "Modifica dipendente fallita.");
+            //Navigo nel JSON per trovare il nodo "Data"
+            using (JsonDocument doc = JsonDocument.Parse(json))
+            {
+                // Verifico se esiste la proprietà "Data" (visto che il tuo JSON la usa come contenitore)
+                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<EmployeeUpdateRequest>(dataElement.GetRawText(), options)!;
+                }
+                else 
+                {
+                    // Se non c'è "Data", provo a deserializzare la radice
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<EmployeeUpdateRequest>(json, options)!;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore nel caricamento: {ex.Message}");
+            Pausa();
+            return;
+        }
+
+        if (req == null) return;
+
+        //Logica di Selezione
+        bool modIdPers = false, modEmail = false, modPassword = false, modRuolo = false, modSalario = false;
+        bool selezioneInCorso = true;
+
+        while (selezioneInCorso)
+        {
+            Console.Clear();
+            PrintHeader($"MODIFICA DIPENDENTE: {codMecc}");
+
+            Console.WriteLine($" [1] --- {(modIdPers ? "[V]" : "[X]")} Id pers. associata     (Attuale: {req.PersonId})");
+            Console.WriteLine($" [2] --- {(modEmail ? "[V]" : "[X]")} Email                  (Attuale: {req.EmailAziendale})");
+            Console.WriteLine($" [3] --- {(modPassword ? "[V]" : "[X]")} Password               (Attuale: {req.Password})");
+            Console.WriteLine($" [4] --- {(modRuolo ? "[V]" : "[X]")} Ruolo                  (Attuale: {req.Ruolo})");
+            Console.WriteLine($" [5] --- {(modSalario ? "[V]" : "[X]")} Salario                (Attuale: {req.Salario})");
+            PrintSeparator();
+            Console.WriteLine(" [c] Continua e inserisci i nuovi dati");
+            Console.WriteLine(" [b] Annulla ed esci");
+            PrintSeparator();
+
+            char scelta = ReadKey("Seleziona opzione: ", '0', 'c');
+
+            switch (scelta)
+            {
+                case '1': modIdPers = !modIdPers; break;
+                case '2': modEmail = !modEmail; break;
+                case '3': modPassword = !modPassword; break;
+                case '4': modRuolo = !modRuolo; break;
+                case '5': modSalario = !modSalario; break;
+                case 'b': return;
+                case 'c': selezioneInCorso = false; break;
+            }
+        }
+
+        // Fase di Inserimento
+        // Se non entri nell'IF, req mantiene il valore scaricato dal DB
+        Console.WriteLine("\n--- Inserimento nuovi dati ---");
+        if (modIdPers)   req.PersonId = LeggiIntero("Nuovo Codice Meccanografico: ");
+        if (modEmail)    req.EmailAziendale = LeggiStringa("Nuova Email: ");
+        if (modPassword) req.Password = LeggiStringa("Nuova Password: ");
+        if (modRuolo)    req.Ruolo = LeggiStringa("Nuovo Ruolo: ");
+        if (modSalario)  req.Salario = LeggiDecimale("Nuovo Salario: ");
+
+        // Salvataggio
+        Console.Write("\nSalvare le modifiche nel database? (S/N): ");
+        if (Console.ReadKey(true).Key == ConsoleKey.S)
+        {
+            //Validazione inserimento secondo i vincoli della classe EmployeeUpdateRequest (Data Annotations)
+            var context = new ValidationContext(req, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(req, context, results, true);
+
+            if (isValid)
+            {
+                var ok = PutAsync("api/Employee", req).GetAwaiter().GetResult();
+                Feedback(ok, "Dati aggiornati con successo!", "Errore durante il salvataggio.");
+            }
+            else
+            {
+                AppLogger.Instance.LogError("I dati inseriti non sono validi:");
+                foreach (var validationResult in results)
+                {
+                    Console.WriteLine($"- {validationResult.ErrorMessage}");
+                }
+                Pausa();
+            }
+        }
     }
 
     static void EliminaDipendente()
@@ -419,18 +634,108 @@ class Program
     static void ModificaCliente()
     {
         Console.Clear();
-        PrintHeader("MODIFICA CLIENTE");
+        PrintHeader("MODIFICA SELETTIVA");
 
-        ClientUpdateRequest req = new();
-        req.CodiceCliente        = LeggiStringa("Codice Cliente da modificare: ").ToUpper();
-        req.PersonId             = LeggiIntero("Nuovo ID Persona associata: ");
-        req.IsFidelizzato        = LeggiBoolean("Cliente fidelizzato? (S/N): ");
-        req.IsIscrittoNewsletter = LeggiBoolean("Iscritto alla newsletter? (S/N): ");
+        string codiceCliente = LeggiStringa("Codice cliente da modificare: ").ToUpper();
+    
+        ClientUpdateRequest req = null!;
 
-        if (!Valida(req)) return;
+        try 
+        {
+            //Recupero la risposta dall'API
+            var json = GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+            
+            if (string.IsNullOrWhiteSpace(json)) {
+                AppLogger.Instance.LogError("Cliente non trovato.");
+                Pausa();
+                return;
+            }
 
-        var ok = PutAsync<ClientUpdateRequest>("api/Client", req).GetAwaiter().GetResult();
-        Feedback(ok, "Cliente modificato con successo.", "Modifica cliente fallita.");
+            //Navigo nel JSON per trovare il nodo "Data"
+            using (JsonDocument doc = JsonDocument.Parse(json))
+            {
+                // Verifico se esiste la proprietà "Data" (visto che il tuo JSON la usa come contenitore)
+                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<ClientUpdateRequest>(dataElement.GetRawText(), options)!;
+                }
+                else 
+                {
+                    // Se non c'è "Data", provo a deserializzare la radice
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<ClientUpdateRequest>(json, options)!;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore nel caricamento: {ex.Message}");
+            Pausa();
+            return;
+        }
+
+        if (req == null) return;
+
+        //Logica di Selezione
+        bool modIdPersAssoc = false;
+        bool selezioneInCorso = true;
+
+        while (selezioneInCorso)
+        {
+            Console.Clear();
+            PrintHeader($"MODIFICA CLIENTE: {codiceCliente}");
+
+            Console.WriteLine($" [1] --- {(modIdPersAssoc ? "[V]" : "[X]")} ID Persona Associata     (Attuale: {req.PersonId})");
+            Console.WriteLine($" [2] --- Fidelizzato   (Attuale: {req.IsFidelizzato})");
+            Console.WriteLine($" [3] --- Iscritto alla Newsletter (Attuale: {req.IsIscrittoNewsletter})");
+            PrintSeparator();
+            Console.WriteLine(" [c] Continua e inserisci i nuovi dati");
+            Console.WriteLine(" [b] Annulla ed esci");
+            PrintSeparator();
+
+            char scelta = ReadKey("Seleziona opzione: ", '0', 'c');
+
+            switch (scelta)
+            {
+                case '1': modIdPersAssoc = !modIdPersAssoc; break;
+                case '2': req.IsFidelizzato = !req.IsFidelizzato; break;
+                case '3': req.IsIscrittoNewsletter = !req.IsIscrittoNewsletter; break;
+                case 'b': return;
+                case 'c': selezioneInCorso = false; break;
+            }
+        }
+
+        // Fase di Inserimento
+        // Se non entri nell'IF, req mantiene il valore scaricato dal DB
+        Console.WriteLine("\n--- Inserimento nuovi dati ---");
+        if (modIdPersAssoc) req.PersonId = LeggiIntero("Nuovo ID Persona Associata: ");
+
+        // Salvataggio
+        Console.Write("\nSalvare le modifiche nel database? (S/N): ");
+        if (Console.ReadKey(true).Key == ConsoleKey.S)
+        {
+            //Validazione inserimento secondo i vincoli della classe ClientUpdateRequest (Data Annotations)
+            var context = new ValidationContext(req, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(req, context, results, true);
+
+            if (isValid)
+            {
+                var ok = PutAsync("api/Client", req).GetAwaiter().GetResult();
+                Feedback(ok, "Dati aggiornati con successo!", "Errore durante il salvataggio.");
+            }
+            else
+            {
+                AppLogger.Instance.LogError("I dati inseriti non sono validi:");
+                foreach (var validationResult in results)
+                {
+                    Console.WriteLine($"- {validationResult.ErrorMessage}");
+                }
+                Pausa();
+            }
+        }
     }
 
     static void EliminaCliente()
@@ -580,18 +885,110 @@ class Program
     static void ModificaProdotto()
     {
         Console.Clear();
-        PrintHeader("MODIFICA PRODOTTO");
+        PrintHeader("MODIFICA SELETTIVA");
 
-        ProductUpdateRequest req = new();
-        req.Sku      = LeggiStringa("SKU prodotto da modificare: ").ToUpper();
-        req.Nome     = LeggiStringa("Nuovo Nome: ");
-        req.Prezzo   = LeggiDecimale("Nuovo Prezzo (euro): ");
-        req.Quantita = LeggiIntero("Nuova Quantita: ");
+        string sku = LeggiStringa("SKU del prodotto da modificare: ").ToUpper();
+    
+        ProductUpdateRequest req = null!;
 
-        if (!Valida(req)) return;
+        try 
+        {
+            //Recupero la risposta dall'API
+            var json = GetAsync($"api/Product/{sku}").GetAwaiter().GetResult();
+            
+            if (string.IsNullOrWhiteSpace(json)) {
+                AppLogger.Instance.LogError("Prodotto non trovato.");
+                Pausa();
+                return;
+            }
 
-        var ok = PutAsync<ProductUpdateRequest>("api/Product", req).GetAwaiter().GetResult();
-        Feedback(ok, "Prodotto modificato con successo.", "Modifica prodotto fallita.");
+            //Navigo nel JSON per trovare il nodo "Data"
+            using (JsonDocument doc = JsonDocument.Parse(json))
+            {
+                // Verifico se esiste la proprietà "Data" (visto che il tuo JSON la usa come contenitore)
+                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                {
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<ProductUpdateRequest>(dataElement.GetRawText(), options)!;
+                }
+                else 
+                {
+                    // Se non c'è "Data", provo a deserializzare la radice
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    req = JsonSerializer.Deserialize<ProductUpdateRequest>(json, options)!;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore nel caricamento: {ex.Message}");
+            Pausa();
+            return;
+        }
+
+        if (req == null) return;
+
+        //Logica di Selezione
+        bool modNome = false, modPrezzo = false, modQuantita = false;
+        bool selezioneInCorso = true;
+
+        while (selezioneInCorso)
+        {
+            Console.Clear();
+            PrintHeader($"MODIFICA PRODOTTO: {sku}");
+
+            Console.WriteLine($" [1] --- {(modNome ? "[V]" : "[X]")} Nome     (Attuale: {req.Nome})");
+            Console.WriteLine($" [2] --- {(modPrezzo ? "[V]" : "[X]")} Prezzo   (Attuale: {req.Prezzo})");
+            Console.WriteLine($" [3] --- {(modQuantita ? "[V]" : "[X]")} Quantità (Attuale: {req.Quantita})");
+            PrintSeparator();
+            Console.WriteLine(" [c] Continua e inserisci i nuovi dati");
+            Console.WriteLine(" [b] Annulla ed esci");
+            PrintSeparator();
+
+            char scelta = ReadKey("Seleziona opzione: ", '0', 'c');
+
+            switch (scelta)
+            {
+                case '1': modNome = !modNome; break;
+                case '2': modPrezzo = !modPrezzo; break;
+                case '3': modQuantita = !modQuantita; break;
+                case 'b': return;
+                case 'c': selezioneInCorso = false; break;
+            }
+        }
+
+        // Fase di Inserimento
+        // Se non entri nell'IF, req mantiene il valore scaricato dal DB
+        Console.WriteLine("\n--- Inserimento nuovi dati ---");
+        if (modNome)     req.Nome = LeggiStringa("Nuovo Nome: ");
+        if (modPrezzo)   req.Prezzo = LeggiDecimale("Nuovo Prezzo: ");
+        if (modQuantita) req.Quantita = LeggiIntero("Nuova Quantità: ");
+
+        // Salvataggio
+        Console.Write("\nSalvare le modifiche nel database? (S/N): ");
+        if (Console.ReadKey(true).Key == ConsoleKey.S)
+        {
+            //Validazione inserimento secondo i vincoli della classe ProductUpdateRequest (Data Annotations)
+            var context = new ValidationContext(req, serviceProvider: null, items: null);
+            var results = new List<ValidationResult>();
+
+            bool isValid = Validator.TryValidateObject(req, context, results, true);
+
+            if (isValid)
+            {
+                var ok = PutAsync("api/Product", req).GetAwaiter().GetResult();
+                Feedback(ok, "Dati aggiornati con successo!", "Errore durante il salvataggio.");
+            }
+            else
+            {
+                AppLogger.Instance.LogError("I dati inseriti non sono validi:");
+                foreach (var validationResult in results)
+                {
+                    Console.WriteLine($"- {validationResult.ErrorMessage}");
+                }
+                Pausa();
+            }
+        }
     }
 
     static void EliminaProdotto()
