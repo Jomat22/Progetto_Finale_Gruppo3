@@ -3,7 +3,6 @@ using store.api.src.Common;
 using store.api.src.Dto.Receipt;
 using store.api.src.Facade;
 using store.api.src.Factory;
-using store.api.src.Infrastructure.Service;
 using store.core.src.Domain.Entity.Sales;
 
 namespace store.api.src.Controller;
