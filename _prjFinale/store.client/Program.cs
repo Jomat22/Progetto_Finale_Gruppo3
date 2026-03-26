@@ -837,15 +837,65 @@ class Program
 
         if (!Valida(req)) return;
 
+        // ---- DECORATOR ----
+        (bool giftWrap, bool express, bool assicurazione) = ScegliDecorator();
+
+        store.core.src.Interface.IProduct prodDec = new store.core.src.Domain.Entity.Catalog.Product
+        {
+            Nome    = req.Nome,
+            Prezzo  = req.Prezzo
+        };
+        if (giftWrap)     prodDec = new store.api.src.Decorator.GiftWrapDecorator(prodDec);
+        if (express)      prodDec = new store.api.src.Decorator.ExpressDeliveryDecorator(prodDec);
+        if (assicurazione) prodDec = new store.api.src.Decorator.InsuranceDecorator(prodDec);
+
+        decimal prezzoFinale = prodDec.GetPrezzo();
+        string  descrizione  = prodDec.Descrizione();
+
         string metodoPagamento = ScegliMetodoPagamento();
-        string esitoPagamento  = EseguiPagamentoLocale(metodoPagamento, req.Prezzo);
-        Console.WriteLine($"\n  {esitoPagamento}");
-        // --------------------------------
+        string esitoPagamento  = EseguiPagamentoLocale(metodoPagamento, prezzoFinale);
+
+        Console.WriteLine();
+        PrintHeader("RIEPILOGO");
+        Console.WriteLine($"  Prodotto    : {descrizione}");
+        Console.WriteLine($"  Prezzo base : {req.Prezzo:C}");
+        Console.WriteLine($"  Prezzo finale: {prezzoFinale:C}");
+        Console.WriteLine($"  Pagamento   : {esitoPagamento}");
+        PrintSeparator();
 
         var ok = PostAsync<ProductCreateRequest>("api/Product", req).GetAwaiter().GetResult();
         Feedback(ok, "Prodotto aggiunto con successo.", "Aggiunta prodotto fallita.");
+
+        // ---- OBSERVER ----
+        if (ok)
+        {
+            _orderPublisher.NotifyOrderCreated(new OrderCreatedEvent(
+                NomeProdotto:    descrizione,
+                PrezzoFinale:    prezzoFinale,
+                MetodoPagamento: metodoPagamento,
+                Timestamp:       DateTime.Now
+            ));
+        }
     }
 
+
+    static (bool giftWrap, bool express, bool assicurazione) ScegliDecorator()
+    {
+        Console.WriteLine();
+        PrintHeader("OPZIONI AGGIUNTIVE");
+        Console.WriteLine("  Puoi aggiungere uno o più servizi extra al prodotto:");
+        Console.WriteLine($"  [1]  Confezione regalo   (+2,00€)");
+        Console.WriteLine($"  [2]  Consegna express    (+5,00€)");
+        Console.WriteLine($"  [3]  Assicurazione       (+3,00€)");
+        Console.WriteLine("  (premi S per aggiungere, N per saltare)");
+        PrintSeparator();
+
+        bool giftWrap     = LeggiBoolean("  Confezione regalo? (S/N): ");
+        bool express      = LeggiBoolean("  Consegna express?  (S/N): ");
+        bool assicurazione = LeggiBoolean("  Assicurazione?     (S/N): ");
+
+        return (giftWrap, express, assicurazione);
+    }
 
     static string ScegliMetodoPagamento()
     {
