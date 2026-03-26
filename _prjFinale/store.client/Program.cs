@@ -109,7 +109,7 @@ class Program
             _sessioneRuolo = data.GetProperty("Ruolo").GetString();
 
             //Controllo sul ruolo dell'utente che sta accedendo
-            if (!string.Equals(_sessioneRuolo, ruoloRichiesto, StringComparison.OrdinalIgnoreCase) && ruoloRichiesto !="Admin")
+            if (!string.Equals(_sessioneRuolo, ruoloRichiesto, StringComparison.OrdinalIgnoreCase) && ruoloRichiesto =="Admin")
             {
                 AppLogger.Instance.LogError($"Accesso negato: il tuo ruolo ({_sessioneRuolo}) non autorizza l'accesso a questa sezione ({ruoloRichiesto}).");
             
