@@ -786,7 +786,7 @@ class Program
             Console.WriteLine(" [2]  Elimina scontrino");
             Console.WriteLine(" [3]  Cerca scontrino (Id Scontrino)");
             Console.WriteLine(" [4]  Visualizza storico scontrini cliente");
-            Console.WriteLine(" [5]  Lista tutti i scontrini");
+            Console.WriteLine(" [5]  Visualizza tutti gli scontrini");
             Console.WriteLine(" [0]  Torna indietro");
             PrintSeparator();
 
@@ -810,7 +810,7 @@ class Program
         ReceiptCreateRequest req = new()
         {
             ClientId = LeggiIntero("ID Cliente associato: "),
-            MetodoPagamento = LeggiStringa("Metodo di pagamento: ").ToUpper(),
+            MetodoPagamento = ScegliMetodoPagamento(),
             Prodotti = new List<ReceiptDetailRequest>()
         };
 
