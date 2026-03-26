@@ -70,7 +70,7 @@ public class ReceiptController(IStoreFacade facade) : ControllerBase
 
             return response switch
             {
-                ApiResponse_Success<IEnumerable<Receipt>> success => Ok(success),
+                ApiResponse_Success<object> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
@@ -156,7 +156,7 @@ public class ReceiptController(IStoreFacade facade) : ControllerBase
 
             return response switch
             {
-                ApiResponse_Success<IEnumerable<Receipt>> success => Ok(success),
+                ApiResponse_Success<object> success => Ok(success),
                 ApiResponse_Error error => StatusCode(error.StatusCode, error.Message),
                 _ => StatusCode(500, ApiResponseFactory.InternalServerError()),
             };
