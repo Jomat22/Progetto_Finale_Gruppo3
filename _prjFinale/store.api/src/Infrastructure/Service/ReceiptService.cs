@@ -55,15 +55,18 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
     {
         try
         {
+            // Usa DateTime.Now (locale) per allinearsi al timezone del server MySQL
             IEnumerable<Receipt> receipts = await _repo.GetReceiptToday_repo();
             decimal totaleGiornaliero = receipts.Sum(r => r.TotaleDefinitivo);
 
-            return ApiResponseFactory.Success(new
+            object payload = new
             {
-                TotaleGiorno = totaleGiornaliero,
+                TotaleGiorno    = totaleGiornaliero,
                 NumeroScontrini = receipts.Count(),
-                Scontrini = receipts
-            });
+                Scontrini       = receipts
+            };
+
+            return ApiResponseFactory.Success(payload);
         }
         catch (Exception) { throw; }
     }
@@ -177,13 +180,15 @@ public class ReceiptService(ReceiptRepository repo, ProductRepository repoProduc
         {
             IEnumerable<Receipt> receipts = await _repo.GetReceiptByClient_repo(clientId);
 
-            return ApiResponseFactory.Success(new
+            object payload = new
             {
-                ClientId = clientId,
-                TotaleSpeso = receipts.Sum(r => r.TotaleDefinitivo),
+                ClientId     = clientId,
+                TotaleSpeso  = receipts.Sum(r => r.TotaleDefinitivo),
                 NumeroOrdini = receipts.Count(),
-                Scontrini = receipts
-            });
+                Scontrini    = receipts
+            };
+
+            return ApiResponseFactory.Success(payload);
         }
         catch (Exception) { throw; }
     }
