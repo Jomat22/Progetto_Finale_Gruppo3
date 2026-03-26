@@ -851,6 +851,17 @@ class Program
 
         var ok = PostAsync<ProductCreateRequest>("api/Product", req).GetAwaiter().GetResult();
         Feedback(ok, "Prodotto aggiunto con successo.", "Aggiunta prodotto fallita.");
+
+        // ---- OBSERVER ----
+        if (ok)
+        {
+            _orderPublisher.NotifyOrderCreated(new OrderCreatedEvent(
+                NomeProdotto:    descrizione,
+                PrezzoFinale:    prezzoFinale,
+                MetodoPagamento: metodoPagamento,
+                Timestamp:       DateTime.Now
+            ));
+        }
     }
 
 
