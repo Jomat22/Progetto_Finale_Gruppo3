@@ -900,17 +900,194 @@ class Program
             Console.WriteLine(" [2]  Visualizza Anagrafiche");
             Console.WriteLine(" [3]  Visualizza ORDINI DEL GIORNO");
             Console.WriteLine(" [4]  Visualizza STORICO ORDINI Cliente");
+            Console.WriteLine(" [5]  Crea ORDINE per Cliente");
             Console.WriteLine(" [0]  Torna indietro (Logout)");
             PrintSeparator();
 
-            switch (ReadKey("Seleziona: ", '0', '4'))
+            switch (ReadKey("Seleziona: ", '0', '5'))
             {
                 case '1': MenuProdotti(); break;
                 case '2': MenuVisualizzaAnagrafiche(); break;
                 case '3': VisualizzaOrdiniDelGiorno(); Pausa(); break;
                 case '4': VisualizzaStoricoOrdiniCliente(); Pausa(); break;
+                case '5': CreaOrdineCliente(); Pausa(); break;
                 case '0': run = false; break;
             }
+        }
+    }
+
+    // =========================================================
+    // CREAZIONE ORDINE CLIENTE (Receipt)
+    // =========================================================
+    static void CreaOrdineCliente()
+    {
+        Console.Clear();
+        PrintHeader("CREA ORDINE CLIENTE");
+
+        // 1. Ricerca cliente tramite codice cliente
+        string codiceCliente = LeggiStringa("Codice Cliente: ").ToUpper();
+        int clientId;
+
+        try
+        {
+            var clientResponse = _http.GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+            if (!clientResponse.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogError($"Cliente '{codiceCliente}' non trovato.");
+                return;
+            }
+            string clientBody = clientResponse.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var clientDoc = JsonDocument.Parse(clientBody);
+            var clientData = clientDoc.RootElement.GetProperty("Data");
+            clientId = clientData.GetProperty("Id").GetInt32();
+            string clienteNome = "";
+            if (clientData.TryGetProperty("Person", out var personEl) && personEl.ValueKind != JsonValueKind.Null)
+                clienteNome = $"{personEl.GetProperty("Nome").GetString()} {personEl.GetProperty("Cognome").GetString()}".Trim();
+            AppLogger.Instance.LogSuccess($"Cliente trovato: {clienteNome} (ID: {clientId})");
+        }
+        catch (Exception ex)
+        {
+            AppLogger.Instance.LogError($"Errore nel recupero del cliente: {ex.Message}");
+            return;
+        }
+
+        // 2. Mostra prodotti disponibili
+        Console.WriteLine();
+        AppLogger.Instance.LogInfo("Prodotti disponibili in magazzino:");
+        var prodotti = GetAsync("api/Product").GetAwaiter().GetResult();
+        if (prodotti != null)
+            Console.WriteLine(prodotti);
+        else
+            AppLogger.Instance.LogWarning("Impossibile recuperare la lista prodotti.");
+
+        // 3. Raccolta prodotti dell'ordine
+        var righeOrdine = new List<ReceiptDetailRequest>();
+        decimal totaleOrdine = 0m;
+
+        bool aggiungiProdotto = true;
+        while (aggiungiProdotto)
+        {
+            Console.WriteLine();
+            PrintHeader($"AGGIUNGI PRODOTTO ALL'ORDINE (righe: {righeOrdine.Count})");
+
+            // Inserimento per SKU (il ProductController accetta solo SKU come parametro GET)
+            string skuProdotto = LeggiStringa("SKU Prodotto: ").ToUpper();
+            int    quantita    = LeggiIntero("Quantità: ");
+
+            // Recupero Id reale e prezzo tramite SKU
+            decimal prezzoBase   = 0m;
+            string  nomeProdotto = skuProdotto;
+            int     prodottoId   = 0;
+            try
+            {
+                var pResp = _http.GetAsync($"api/Product/{skuProdotto}").GetAwaiter().GetResult();
+                if (pResp.IsSuccessStatusCode)
+                {
+                    string pBody = pResp.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+                    var pDoc     = JsonDocument.Parse(pBody);
+                    var pData    = pDoc.RootElement.GetProperty("Data");
+                    prodottoId   = pData.GetProperty("Id").GetInt32();
+                    prezzoBase   = pData.GetProperty("Prezzo").GetDecimal();
+                    nomeProdotto = pData.GetProperty("Nome").GetString() ?? nomeProdotto;
+                    AppLogger.Instance.LogSuccess($"Prodotto trovato: {nomeProdotto} (ID: {prodottoId}) — Prezzo base: {prezzoBase:C}");
+                }
+                else
+                {
+                    AppLogger.Instance.LogWarning($"Prodotto con SKU '{skuProdotto}' non trovato. Riga saltata.");
+                    continue;
+                }
+            }
+            catch (Exception ex)
+            {
+                AppLogger.Instance.LogError($"Errore nel recupero del prodotto: {ex.Message}");
+                continue;
+            }
+
+            // 4. Decorator
+            (bool giftWrap, bool express, bool assicurazione) = ScegliDecorator();
+
+            store.core.src.Interface.IProduct prodDec = new store.core.src.Domain.Entity.Catalog.Product
+            {
+                Nome   = nomeProdotto,
+                Prezzo = prezzoBase
+            };
+            if (giftWrap)      prodDec = new store.api.src.Decorator.GiftWrapDecorator(prodDec);
+            if (express)       prodDec = new store.api.src.Decorator.ExpressDeliveryDecorator(prodDec);
+            if (assicurazione) prodDec = new store.api.src.Decorator.InsuranceDecorator(prodDec);
+
+            decimal prezzoUnitarioFinale = prodDec.GetPrezzo();
+            string  descrizioneRiga      = prodDec.Descrizione();
+            decimal totalRiga            = prezzoUnitarioFinale * quantita;
+            totaleOrdine                += totalRiga;
+
+            Console.WriteLine();
+            Console.WriteLine($"  Prodotto    : {descrizioneRiga}");
+            Console.WriteLine($"  Prezzo unit.: {prezzoUnitarioFinale:C}  x  {quantita} = {totalRiga:C}");
+            PrintSeparator();
+
+            righeOrdine.Add(new ReceiptDetailRequest
+            {
+                ProdottoId    = prodottoId,
+                Quantita      = quantita,
+                GiftWrap      = giftWrap,
+                Express       = express,
+                Assicurazione = assicurazione
+            });
+
+            AppLogger.Instance.LogSuccess($"Riga aggiunta. Totale provvisorio ordine: {totaleOrdine:C}");
+
+            aggiungiProdotto = LeggiBoolean("\nAggiungere un altro prodotto? (S/N): ");
+        }
+
+        if (righeOrdine.Count == 0)
+        {
+            AppLogger.Instance.LogWarning("Nessun prodotto aggiunto. Ordine annullato.");
+            return;
+        }
+
+        // 5. Metodo di pagamento (Strategy)
+        string metodoPagamento = ScegliMetodoPagamento();
+
+        // 6. Riepilogo
+        Console.WriteLine();
+        PrintHeader("RIEPILOGO ORDINE");
+        Console.WriteLine($"  Cliente     : {codiceCliente} (ID: {clientId})");
+        Console.WriteLine($"  N. prodotti : {righeOrdine.Count}");
+        Console.WriteLine($"  Totale est. : {totaleOrdine:C}");
+        Console.WriteLine($"  Pagamento   : {metodoPagamento}");
+        PrintSeparator();
+
+        string esitoPagamento = EseguiPagamentoLocale(metodoPagamento, totaleOrdine);
+        Console.WriteLine($"  Esito pag.  : {esitoPagamento}");
+        PrintSeparator();
+
+        bool conferma = LeggiBoolean("Confermare e inviare l'ordine? (S/N): ");
+        if (!conferma)
+        {
+            AppLogger.Instance.LogWarning("Ordine annullato dall'operatore.");
+            return;
+        }
+
+        // 7. POST api/Receipt
+        var receiptRequest = new ReceiptCreateRequest
+        {
+            ClientId        = clientId,
+            MetodoPagamento = metodoPagamento,
+            Prodotti        = righeOrdine
+        };
+
+        var ok = PostAsync<ReceiptCreateRequest>("api/Receipt", receiptRequest).GetAwaiter().GetResult();
+        Feedback(ok, "Ordine creato con successo! Sarà visibile nei report.", "Creazione ordine fallita.");
+
+        // 8. Observer
+        if (ok)
+        {
+            _orderPublisher.NotifyOrderCreated(new OrderCreatedEvent(
+                NomeProdotto:    $"Ordine cliente {codiceCliente} ({righeOrdine.Count} prodotti)",
+                PrezzoFinale:    totaleOrdine,
+                MetodoPagamento: metodoPagamento,
+                Timestamp:       DateTime.Now
+            ));
         }
     }
 
@@ -955,15 +1132,65 @@ class Program
 
         if (!Valida(req)) return;
 
+        // ---- DECORATOR ----
+        (bool giftWrap, bool express, bool assicurazione) = ScegliDecorator();
+
+        store.core.src.Interface.IProduct prodDec = new store.core.src.Domain.Entity.Catalog.Product
+        {
+            Nome    = req.Nome,
+            Prezzo  = req.Prezzo
+        };
+        if (giftWrap)     prodDec = new store.api.src.Decorator.GiftWrapDecorator(prodDec);
+        if (express)      prodDec = new store.api.src.Decorator.ExpressDeliveryDecorator(prodDec);
+        if (assicurazione) prodDec = new store.api.src.Decorator.InsuranceDecorator(prodDec);
+
+        decimal prezzoFinale = prodDec.GetPrezzo();
+        string  descrizione  = prodDec.Descrizione();
+
         string metodoPagamento = ScegliMetodoPagamento();
-        string esitoPagamento  = EseguiPagamentoLocale(metodoPagamento, req.Prezzo);
-        Console.WriteLine($"\n  {esitoPagamento}");
-        // --------------------------------
+        string esitoPagamento  = EseguiPagamentoLocale(metodoPagamento, prezzoFinale);
+
+        Console.WriteLine();
+        PrintHeader("RIEPILOGO");
+        Console.WriteLine($"  Prodotto    : {descrizione}");
+        Console.WriteLine($"  Prezzo base : {req.Prezzo:C}");
+        Console.WriteLine($"  Prezzo finale: {prezzoFinale:C}");
+        Console.WriteLine($"  Pagamento   : {esitoPagamento}");
+        PrintSeparator();
 
         var ok = PostAsync<ProductCreateRequest>("api/Product", req).GetAwaiter().GetResult();
         Feedback(ok, "Prodotto aggiunto con successo.", "Aggiunta prodotto fallita.");
+
+        // ---- OBSERVER ----
+        if (ok)
+        {
+            _orderPublisher.NotifyOrderCreated(new OrderCreatedEvent(
+                NomeProdotto:    descrizione,
+                PrezzoFinale:    prezzoFinale,
+                MetodoPagamento: metodoPagamento,
+                Timestamp:       DateTime.Now
+            ));
+        }
     }
 
+
+    static (bool giftWrap, bool express, bool assicurazione) ScegliDecorator()
+    {
+        Console.WriteLine();
+        PrintHeader("OPZIONI AGGIUNTIVE");
+        Console.WriteLine("  Puoi aggiungere uno o più servizi extra al prodotto:");
+        Console.WriteLine($"  [1]  Confezione regalo   (+2,00€)");
+        Console.WriteLine($"  [2]  Consegna express    (+5,00€)");
+        Console.WriteLine($"  [3]  Assicurazione       (+3,00€)");
+        Console.WriteLine("  (premi S per aggiungere, N per saltare)");
+        PrintSeparator();
+
+        bool giftWrap     = LeggiBoolean("  Confezione regalo? (S/N): ");
+        bool express      = LeggiBoolean("  Consegna express?  (S/N): ");
+        bool assicurazione = LeggiBoolean("  Assicurazione?     (S/N): ");
+
+        return (giftWrap, express, assicurazione);
+    }
 
     static string ScegliMetodoPagamento()
     {
@@ -1180,15 +1407,16 @@ class Program
         int clientId;
         try
         {
-            var response = _http.GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
-            if (!response.IsSuccessStatusCode)
+            var clientResp = _http.GetAsync($"api/Client/{codiceCliente}").GetAwaiter().GetResult();
+            if (!clientResp.IsSuccessStatusCode)
             {
                 AppLogger.Instance.LogWarning($"Cliente '{codiceCliente}' non trovato.");
                 return;
             }
-            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            var doc = JsonDocument.Parse(body);
-            clientId = doc.RootElement.GetProperty("Data").GetProperty("Id").GetInt32();
+            string clientBody = clientResp.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            var clientDoc = JsonDocument.Parse(clientBody);
+            clientId = clientDoc.RootElement.GetProperty("Data").GetProperty("Id").GetInt32();
+            AppLogger.Instance.LogInfo($"Cliente trovato: ID {clientId}");
         }
         catch
         {
@@ -1196,15 +1424,78 @@ class Program
             return;
         }
 
-        var result = GetAsync($"api/Receipt/{clientId}").GetAwaiter().GetResult();
+        try
+        {
+            var response = _http.GetAsync($"api/Receipt/storico/cliente/{clientId}").GetAwaiter().GetResult();
+            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-        if (result != null)
-        {
-            Console.WriteLine(result);
+            AppLogger.Instance.LogInfo($"[HTTP {(int)response.StatusCode}] GET api/Receipt/storico/cliente/{clientId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogError($"Errore API: {body}");
+                return;
+            }
+
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+
+            if (!root.TryGetProperty("Data", out var data))
+            {
+                AppLogger.Instance.LogWarning("Risposta API non contiene il campo Data.");
+                Console.WriteLine(body);
+                return;
+            }
+
+            decimal totSpeso  = data.TryGetProperty("TotaleSpeso",  out var ts) ? ts.GetDecimal() : 0;
+            int     numOrdini = data.TryGetProperty("NumeroOrdini", out var no) ? no.GetInt32()  : 0;
+
+            Console.WriteLine();
+            Console.WriteLine($"  Cliente       : {codiceCliente} (ID: {clientId})");
+            Console.WriteLine($"  Ordini totali : {numOrdini}");
+            Console.WriteLine($"  Totale speso  : {totSpeso:C}");
+            PrintSeparator();
+
+            if (data.TryGetProperty("Scontrini", out var scontrini) && scontrini.ValueKind == JsonValueKind.Array)
+            {
+                if (!scontrini.EnumerateArray().Any())
+                {
+                    AppLogger.Instance.LogWarning($"Nessun ordine trovato per il cliente '{codiceCliente}'.");
+                    return;
+                }
+
+                foreach (var s in scontrini.EnumerateArray())
+                {
+                    int    id      = s.TryGetProperty("Id",               out var sid) ? sid.GetInt32()   : 0;
+                    string metodo  = s.TryGetProperty("MetodoPagamento",  out var mp)  ? mp.GetString()  ?? "" : "";
+                    decimal tot    = s.TryGetProperty("TotaleDefinitivo", out var td)  ? td.GetDecimal()  : 0;
+                    string dataE   = s.TryGetProperty("DataEmissione",    out var de)  ? de.GetString()  ?? "" : "";
+
+                    Console.WriteLine($"  Scontrino #{id} | {metodo} | {tot:C} | {dataE}");
+
+                    if (s.TryGetProperty("RicevutaDettagli", out var dettagli) && dettagli.ValueKind == JsonValueKind.Array)
+                    {
+                        foreach (var d in dettagli.EnumerateArray())
+                        {
+                            string nome = "";
+                            if (d.TryGetProperty("Prodotto", out var prod) && prod.ValueKind != JsonValueKind.Null)
+                                nome = prod.TryGetProperty("Nome", out var pn) ? pn.GetString() ?? "" : "";
+                            int    qty  = d.TryGetProperty("Quantita",     out var q)   ? q.GetInt32()    : 0;
+                            decimal pt  = d.TryGetProperty("PrezzoTotale", out var ptt) ? ptt.GetDecimal(): 0;
+                            Console.WriteLine($"    - {nome}  x{qty}  {pt:C}");
+                        }
+                    }
+                    PrintSeparator();
+                }
+            }
+            else
+            {
+                AppLogger.Instance.LogWarning($"Nessun ordine trovato per il cliente '{codiceCliente}'.");
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AppLogger.Instance.LogWarning($"Nessun ordine trovato per il cliente '{codiceCliente}'.");
+            AppLogger.Instance.LogError($"Errore visualizzazione storico: {ex.Message}");
         }
     }
 
@@ -1216,67 +1507,70 @@ class Program
         try
         {
             var response = _http.GetAsync("api/Receipt/oggi").GetAwaiter().GetResult();
+            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+
+            AppLogger.Instance.LogInfo($"[HTTP {(int)response.StatusCode}] GET api/Receipt/oggi");
+
             if (!response.IsSuccessStatusCode)
             {
-                AppLogger.Instance.LogWarning("Nessun ordine registrato oggi.");
+                AppLogger.Instance.LogError($"Errore API: {body}");
                 return;
             }
 
-            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
-            using (JsonDocument doc = JsonDocument.Parse(body))
+            using var doc = JsonDocument.Parse(body);
+            var root = doc.RootElement;
+
+            // Legge il campo Data che contiene l'oggetto anonimo { TotaleGiorno, NumeroScontrini, Scontrini }
+            if (!root.TryGetProperty("Data", out var data))
             {
-                // Estrai il campo "Data" dal wrapper della risposta
-                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                AppLogger.Instance.LogWarning("Risposta API non contiene il campo Data.");
+                Console.WriteLine(body);
+                return;
+            }
+
+            decimal totale    = data.TryGetProperty("TotaleGiorno",    out var t) ? t.GetDecimal() : 0;
+            int     numero    = data.TryGetProperty("NumeroScontrini",  out var n) ? n.GetInt32()  : 0;
+
+            Console.WriteLine();
+            Console.WriteLine($"  Ordini oggi   : {numero}");
+            Console.WriteLine($"  Totale giorno : {totale:C}");
+            PrintSeparator();
+
+            if (data.TryGetProperty("Scontrini", out var scontrini) && scontrini.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var s in scontrini.EnumerateArray())
                 {
-                    // Leggi i totali
-                    if (dataElement.TryGetProperty("TotaleGiorno", out JsonElement totaleElement))
-                    {
-                        decimal totale = totaleElement.GetDecimal();
-                        Console.WriteLine($"\n📊 Totale del giorno: €{totale:F2}");
-                    }
+                    int    id      = s.TryGetProperty("Id",               out var sid)  ? sid.GetInt32()   : 0;
+                    int    cliId   = s.TryGetProperty("ClientId",         out var cid)  ? cid.GetInt32()   : 0;
+                    string metodo  = s.TryGetProperty("MetodoPagamento",  out var mp)   ? mp.GetString()  ?? "" : "";
+                    decimal tot    = s.TryGetProperty("TotaleDefinitivo", out var td)   ? td.GetDecimal()  : 0;
+                    string data_e  = s.TryGetProperty("DataEmissione",    out var de)   ? de.GetString()  ?? "" : "";
 
-                    if (dataElement.TryGetProperty("NumeroScontrini", out JsonElement numElement))
-                    {
-                        int numero = numElement.GetInt32();
-                        Console.WriteLine($"📋 Numero scontrini: {numero}");
-                    }
+                    Console.WriteLine($"  Scontrino #{id} | Cliente ID: {cliId} | {metodo} | {tot:C} | {data_e}");
 
-                    PrintSeparator();
-
-                    // Visualizza i dettagli degli scontrini
-                    if (dataElement.TryGetProperty("Scontrini", out JsonElement scentriniArray))
+                    if (s.TryGetProperty("RicevutaDettagli", out var dettagli) && dettagli.ValueKind == JsonValueKind.Array)
                     {
-                        if (scentriniArray.GetArrayLength() == 0)
+                        foreach (var d in dettagli.EnumerateArray())
                         {
-                            AppLogger.Instance.LogWarning("Nessuno scontrino registrato oggi.");
-                            return;
-                        }
-
-                        foreach (JsonElement scontrino in scentriniArray.EnumerateArray())
-                        {
-                            Console.WriteLine();
-                            int id = scontrino.GetProperty("Id").GetInt32();
-                            int clientId = scontrino.GetProperty("ClientId").GetInt32();
-                            string metodo = scontrino.GetProperty("MetodoPagamento").GetString() ?? "N/A";
-                            decimal totaleSconto = scontrino.GetProperty("TotaleDefinitivo").GetDecimal();
-                            string data = scontrino.GetProperty("DataEmissione").GetString() ?? "N/A";
-
-                            Console.WriteLine($"ID: {id} | Cliente: {clientId} | Metodo: {metodo}");
-                            Console.WriteLine($"Totale: €{totaleSconto:F2} | Data: {data}");
+                            string nome  = "";
+                            if (d.TryGetProperty("Prodotto", out var prod) && prod.ValueKind != JsonValueKind.Null)
+                                nome = prod.TryGetProperty("Nome", out var pn) ? pn.GetString() ?? "" : "";
+                            int    qty   = d.TryGetProperty("Quantita",    out var q)  ? q.GetInt32()   : 0;
+                            decimal pt   = d.TryGetProperty("PrezzoTotale",out var ptt)? ptt.GetDecimal(): 0;
+                            Console.WriteLine($"    - {nome}  x{qty}  {pt:C}");
                         }
                     }
-
                     PrintSeparator();
                 }
-                else
-                {
-                    AppLogger.Instance.LogWarning("Formato risposta non riconosciuto.");
-                }
+            }
+            else
+            {
+                AppLogger.Instance.LogWarning("Nessun ordine registrato oggi.");
             }
         }
         catch (Exception ex)
         {
-            AppLogger.Instance.LogError($"Errore durante la visualizzazione: {ex.Message}");
+            AppLogger.Instance.LogError($"Errore visualizzazione ordini del giorno: {ex.Message}");
         }
     }
 
@@ -1319,7 +1613,11 @@ class Program
         {
             var response = await _http.GetAsync(endpoint);
             string body = await response.Content.ReadAsStringAsync();
-            if (!response.IsSuccessStatusCode) return null;
+            if (!response.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogError($"GET {endpoint} -> HTTP {(int)response.StatusCode}: {body}");
+                return null;
+            }
             try
             {
                 var doc = JsonDocument.Parse(body);
