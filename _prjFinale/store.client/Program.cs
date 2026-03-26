@@ -2,6 +2,7 @@
 using store.api.src.Dto.Employee;
 using store.api.src.Dto.Person;
 using store.api.src.Dto.Product;
+using store.api.src.Dto.Receipt;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -9,6 +10,8 @@ using store.client.Observer;
 using store.client.Singleton;
 using store.core.src.Const;
 using System.Reflection.Metadata.Ecma335;
+using store.core.src.Domain.Entity.Sales;
+using Microsoft.AspNetCore.Mvc.TagHelpers;
 
 namespace store.client;
 
@@ -165,16 +168,18 @@ class Program
             Console.WriteLine(" [1]  Gestione Anagrafica Persone");
             Console.WriteLine(" [2]  Gestione Dipendenti");
             Console.WriteLine(" [3]  Gestione Clienti");
-            Console.WriteLine(" [4]  Report Ordini del Giorno");
+            Console.WriteLine(" [4]  Gestione Scontrini");
+            Console.WriteLine(" [5]  Report Ordini del Giorno");
             Console.WriteLine(" [0]  Torna indietro (Logout)");
             PrintSeparator();
 
-            switch (ReadKey("Seleziona: ", '0', '4'))
+            switch (ReadKey("Seleziona: ", '0', '5'))
             {
                 case '1': MenuPersone(); break;
                 case '2': MenuDipendenti(); break;
                 case '3': MenuClienti(); break;
-                case '4': VisualizzaOrdiniDelGiorno(); Pausa(); break;
+                case '4': MenuScontrini(); break;
+                case '5': VisualizzaOrdiniDelGiorno(); Pausa(); break;
                 case '0': run = false; break;
             }
         }
@@ -768,6 +773,119 @@ class Program
         StampaLista(result);
     }
 
+    // ---- SCONTRINI ----
+
+    static void MenuScontrini()
+    {
+        bool run = true;
+        while (run)
+        {
+            Console.Clear();
+            PrintHeader("GESTIONE SCONTRINI");
+            Console.WriteLine(" [1]  Aggiungi scontrino");
+            Console.WriteLine(" [2]  Elimina scontrino");
+            Console.WriteLine(" [3]  Cerca scontrino (Id Scontrino)");
+            Console.WriteLine(" [4]  Visualizza storico scontrini cliente");
+            Console.WriteLine(" [5]  Lista tutti i scontrini");
+            Console.WriteLine(" [0]  Torna indietro");
+            PrintSeparator();
+
+            switch (ReadKey("Seleziona: ", '0', '6'))
+            {
+                case '1': AggiungiScontrino();  Pausa(); break;
+                case '2': EliminaScontrino();   Pausa(); break;
+                case '3': CercaScontrino();     Pausa(); break;
+                case '4': VisualizzaStoricoOrdiniCliente(); Pausa(); break;
+                case '5': ListaScontrini(); Pausa(); break;
+                case '0': run = false; break;
+            }
+        }
+    }
+
+    static void AggiungiScontrino()
+    {
+        Console.Clear();
+        PrintHeader("AGGIUNGI SCONTRINO");
+
+        ReceiptCreateRequest req = new()
+        {
+            ClientId = LeggiIntero("ID Cliente associato: "),
+            MetodoPagamento = LeggiStringa("Metodo di pagamento: ").ToUpper(),
+            Prodotti = new List<ReceiptDetailRequest>()
+        };
+
+        while (true)
+        {
+            int prodottoId = LeggiIntero("ID Prodotto acquistato (0 per terminare): ");
+            if (prodottoId == 0) break;
+
+            int quantita = LeggiIntero("Quantità: ");
+
+            bool giftWrap = ReadKey("Gift wrap? (S/N): ", 'N', 'S') == 'S';
+            bool express = ReadKey("Express delivery? (S/N): ", 'N', 'S') == 'S';
+            bool assicurazione = ReadKey("Assicurazione? (S/N): ", 'N', 'S') == 'S';
+
+            req.Prodotti.Add(new ReceiptDetailRequest
+            {
+                ProdottoId = prodottoId,
+                Quantita = quantita,
+                GiftWrap = giftWrap,
+                Express = express,
+                Assicurazione = assicurazione
+            });
+        }
+
+        if (req.Prodotti.Count == 0)
+        {
+            AppLogger.Instance.LogWarning("Devi aggiungere almeno un prodotto.");
+            return;
+        }
+
+        if (!Valida(req)) return;
+
+        var ok = PostAsync<ReceiptCreateRequest>("api/Receipt", req).GetAwaiter().GetResult();
+        Feedback(ok, "Scontrino aggiunto con successo.", "Aggiunta scontrino fallita.");
+    }
+
+    static void EliminaScontrino()
+    {
+        Console.Clear();
+        PrintHeader("ELIMINA SCONTRINO");
+
+        int id = LeggiIntero("ID Scontrino da eliminare: ");
+        Console.Write($"\nConfermi eliminazione dello scontrino '{id}'? (S/N): ");
+        if (Console.ReadKey().Key != ConsoleKey.S) { Console.WriteLine("\nOperazione annullata."); return; }
+
+        var ok = DeleteAsync($"api/Receipt/{id}").GetAwaiter().GetResult();
+        Feedback(ok, "Scontrino eliminato con successo.", "Eliminazione scontrino fallita.");
+    }
+
+    static void CercaScontrino()
+    {
+        Console.Clear();
+        PrintHeader("CERCA SCONTRINO");
+
+        int id = LeggiIntero("ID Scontrino: ");
+        var result = GetAsync($"api/Receipt/{id}").GetAwaiter().GetResult();
+
+        if (result != null)
+        {
+            Console.WriteLine(result);
+        }
+        else
+        {
+            AppLogger.Instance.LogWarning($"Scontrino con ID {id} non trovato.");
+        }
+    }
+
+    static void ListaScontrini()
+    {
+        Console.Clear();
+        PrintHeader("LISTA SCONTRINI");
+        var result = GetAsync("api/Receipt").GetAwaiter().GetResult();
+        StampaLista(result);
+    }
+
     // =========================================================
     // MENU MAGAZZINIERE
     // =========================================================
@@ -1078,7 +1196,7 @@ class Program
             return;
         }
 
-        var result = GetAsync($"api/Receipt/storico/cliente/{clientId}").GetAwaiter().GetResult();
+        var result = GetAsync($"api/Receipt/{clientId}").GetAwaiter().GetResult();
 
         if (result != null)
         {
@@ -1094,15 +1212,71 @@ class Program
     {
         Console.Clear();
         PrintHeader("ORDINI DEL GIORNO E TOTALE");
-        var result = GetAsync("api/Receipt/oggi").GetAwaiter().GetResult();
 
-        if (result != null)
+        try
         {
-            Console.WriteLine(result);
+            var response = _http.GetAsync("api/Receipt/oggi").GetAwaiter().GetResult();
+            if (!response.IsSuccessStatusCode)
+            {
+                AppLogger.Instance.LogWarning("Nessun ordine registrato oggi.");
+                return;
+            }
+
+            string body = response.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+            using (JsonDocument doc = JsonDocument.Parse(body))
+            {
+                // Estrai il campo "Data" dal wrapper della risposta
+                if (doc.RootElement.TryGetProperty("Data", out JsonElement dataElement))
+                {
+                    // Leggi i totali
+                    if (dataElement.TryGetProperty("TotaleGiorno", out JsonElement totaleElement))
+                    {
+                        decimal totale = totaleElement.GetDecimal();
+                        Console.WriteLine($"\n📊 Totale del giorno: €{totale:F2}");
+                    }
+
+                    if (dataElement.TryGetProperty("NumeroScontrini", out JsonElement numElement))
+                    {
+                        int numero = numElement.GetInt32();
+                        Console.WriteLine($"📋 Numero scontrini: {numero}");
+                    }
+
+                    PrintSeparator();
+
+                    // Visualizza i dettagli degli scontrini
+                    if (dataElement.TryGetProperty("Scontrini", out JsonElement scentriniArray))
+                    {
+                        if (scentriniArray.GetArrayLength() == 0)
+                        {
+                            AppLogger.Instance.LogWarning("Nessuno scontrino registrato oggi.");
+                            return;
+                        }
+
+                        foreach (JsonElement scontrino in scentriniArray.EnumerateArray())
+                        {
+                            Console.WriteLine();
+                            int id = scontrino.GetProperty("Id").GetInt32();
+                            int clientId = scontrino.GetProperty("ClientId").GetInt32();
+                            string metodo = scontrino.GetProperty("MetodoPagamento").GetString() ?? "N/A";
+                            decimal totaleSconto = scontrino.GetProperty("TotaleDefinitivo").GetDecimal();
+                            string data = scontrino.GetProperty("DataEmissione").GetString() ?? "N/A";
+
+                            Console.WriteLine($"ID: {id} | Cliente: {clientId} | Metodo: {metodo}");
+                            Console.WriteLine($"Totale: €{totaleSconto:F2} | Data: {data}");
+                        }
+                    }
+
+                    PrintSeparator();
+                }
+                else
+                {
+                    AppLogger.Instance.LogWarning("Formato risposta non riconosciuto.");
+                }
+            }
         }
-        else
+        catch (Exception ex)
         {
-            AppLogger.Instance.LogWarning("Nessun ordine registrato oggi.");
+            AppLogger.Instance.LogError($"Errore durante la visualizzazione: {ex.Message}");
         }
     }
 
